@@ -14,3 +14,8 @@ class RenameNewPathModel:
         self.old_names = []
         self.new_names = []
         self.rename_button = []
+
+    def set_new_name(self, file_name):
+        self.old_names.append(file_name)
+
+

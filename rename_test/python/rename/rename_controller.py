@@ -109,7 +109,7 @@ class RenamePathController:
         front_merge_path = '/'.join(front_split_path)
         self.rename_view.line_edit.setText(front_merge_path)
         self.rename_model.set_path(front_merge_path)
-        self.newname_view.old_name_edit.setText(file_name)
+        self.newname_view.old_edit.setText(file_name)
         # self.newname_model.set_new_name(file_name)
 
 

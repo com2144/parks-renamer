@@ -11,10 +11,6 @@ class RenamePathModel:
 
 class RenameNewPathModel:
     def __init__(self):
-        self.new_name = ''
-
-    def set_new_name(self, new_name):
-        self.new_name = new_name
-
-    def get_new_name(self):
-        return self.new_name
+        self.old_names = []
+        self.new_names = []
+        self.rename_button = []

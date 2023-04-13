@@ -7,14 +7,14 @@ class RenamePathView(QtWidgets.QWidget):
         self.line_edit = QtWidgets.QLineEdit()
         self.browse_button = QtWidgets.QPushButton("Browse")
         self.path_layout = QtWidgets.QHBoxLayout()
-        self.main_layout = QtWidgets.QVBoxLayout()
+        self.main_layout = QtWidgets.QGridLayout()
 
 
 class RenameNewPathView(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
-        self.old_name_edit = QtWidgets.QLineEdit()
-        self.new_name_edit = QtWidgets.QLineEdit()
+        self.old_edit = QtWidgets.QLineEdit()
+        self.new_edit = QtWidgets.QLineEdit()
         self.rename_button = QtWidgets.QPushButton("Rename")
         self.plus_button = QtWidgets.QPushButton("Plus Files")
         self.new_name_layout = QtWidgets.QHBoxLayout()

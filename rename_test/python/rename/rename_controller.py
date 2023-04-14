@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QApplication, QMainWindow, QFileDialog, QLineEdit, QPushButton, QHBoxLayout
+from PySide2.QtWidgets import *
 from rename.rename_model import RenamePathModel
 from rename.rename_view import RenamePathView
 from rename.rename_model import RenameNewPathModel
@@ -27,6 +27,7 @@ class RenamePathController:
 
         self.newname_view.new_name_layout.addWidget(self.newname_view.old_edit)
         self.newname_view.new_name_layout.addWidget(self.newname_view.new_edit)
+        self.newname_view.new_name_layout.addWidget(self.newname_view.minus_button)
 
         self.newname_view.plus_button.clicked.connect(self.on_plus_button_clicked)
 
@@ -54,49 +55,50 @@ class RenamePathController:
             self.rename_model.set_path(self.file_path)
 
     def on_plus_button_clicked(self):
-        self.newname_view.old_edit = QLineEdit()
-        self.newname_view.new_edit = QLineEdit()
-        re_name_button = QPushButton("Rename")
+        self.newname_model.action_number.append('action')
 
-        self.newname_model.old_names.append(self.newname_view.old_edit)
-        self.newname_model.new_names.append(self.newname_view.new_edit)
-        self.newname_model.rename_button.append(re_name_button)
+        action_count = len(self.newname_model.action_number)
 
-        row = len(self.newname_model.old_names)
+        if action_count > 0:
+            self.newname_view.rename_button.setParent(None)
+            self.newname_view.rename_button.hide()
+            self.newname_view.rename_button_layout.setParent(None)
+            self.newname_view.rename_button_layout.removeWidget(self.newname_view.rename_button)
 
-        for i in reversed(range(self.newname_view.new_name_layout.count())):
-            self.newname_view.new_name_layout.itemAt(i).widget().setParent(None)
-        for i in reversed(range(self.newname_view.rename_button_layout.count())):
-            self.newname_view.rename_button_layout.itemAt(i).widget().setParent(None)
+        self.newname_view.second_old_edit = QLineEdit()
+        self.newname_view.second_new_edit = QLineEdit()
+        self.newname_view.second_minus_button = QPushButton('-')
+        self.newname_view.second_name_layout = QHBoxLayout()
+        self.newname_view.second_name_layout.addWidget(self.newname_view.second_old_edit)
+        self.newname_view.second_name_layout.addWidget(self.newname_view.second_new_edit)
+        self.newname_view.second_name_layout.addWidget(self.newname_view.second_minus_button)
 
-        for i in range(row):
-            old_edit = self.newname_model.old_names[i]
-            new_edit = self.newname_model.new_names[i]
-            re_name_button = self.newname_model.rename_button[-1]
+        self.newname_view.rename_button = QPushButton("Rename")
+        self.newname_view.rename_button_layout = QHBoxLayout()
+        self.newname_view.rename_button_layout.addWidget(self.newname_view.rename_button)
 
-            if self.rename_view.main_layout.indexOf(old_edit) != -1:
-                self.rename_view.main_layout.removeWidget(old_edit)
-                old_edit.setParent(None)
-            if self.rename_view.main_layout.indexOf(new_edit) != -1:
-                self.rename_view.main_layout.removeWidget(new_edit)
-                new_edit.setParent(None)
-            if self.rename_view.main_layout.indexOf(re_name_button) != -1:
-                self.rename_view.main_layout.removeWidget(re_name_button)
-                re_name_button.setParent(None)
+        self.newname_model.old_text_widget.append(self.newname_view.second_old_edit)
+        self.newname_model.new_text_widget.append(self.newname_view.second_new_edit)
+        self.newname_model.minus_button.append(self.newname_view.second_minus_button)
+        self.newname_model.rename_hbox.append(self.newname_view.second_name_layout)
+        self.newname_model.rename_button.append(self.newname_view.rename_button)
+
+        for i in range(action_count):
+            self.newname_view.second_old_edit = self.newname_model.old_text_widget[i]
+            self.newname_view.second_new_edit = self.newname_model.new_text_widget[i]
+            self.newname_view.second_minus_button = self.newname_model.minus_button[i]
+            self.newname_view.second_rename_button = self.newname_model.rename_button[-1]
 
             hbox = QHBoxLayout()
-            hbox.addWidget(old_edit)
-            hbox.addWidget(new_edit)
+            hbox.addWidget(self.newname_view.second_old_edit)
+            hbox.addWidget(self.newname_view.second_new_edit)
+            hbox.addWidget(self.newname_view.second_minus_button)
 
-            self.rename_view.main_layout.addLayout(hbox, i + 3, 1)
-            if row > 1:
-                old_re_name_button = self.newname_model.rename_button[-2]
-                if self.rename_view.main_layout.indexOf(old_re_name_button) != -1:
-                    self.rename_view.main_layout.removeWidget(old_re_name_button)
-                    old_re_name_button.setParent(None)
-                    old_re_name_button.hide()
+            mhbox = QHBoxLayout()
+            mhbox.addWidget(self.newname_view.second_rename_button)
 
-            self.rename_view.main_layout.addWidget(re_name_button, row + 3, 1)
+            self.rename_view.main_layout.addLayout(hbox, i+4, 1)
+            self.rename_view.main_layout.addLayout(mhbox, i+5, 1)
 
     def set_file_path(self, file_path):
         front_split_path = file_path.split('/')[:-1]

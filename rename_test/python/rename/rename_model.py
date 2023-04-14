@@ -16,9 +16,10 @@ class RenameNewPathModel:
         self.old_text_widget = []
         # self.new_names = []
         self.new_text_widget = []
-        self.minus_button = []
         self.rename_hbox = []
+        self.rename_mhbox = []
         self.rename_button = []
+        self.action_count = None
 
     def set_new_name(self, file_name):
         self.old_names.append(file_name)

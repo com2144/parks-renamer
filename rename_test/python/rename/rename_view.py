@@ -1,28 +1,28 @@
-from PySide2 import QtWidgets
+from PySide2.QtWidgets import *
 
 
-class RenamePathView(QtWidgets.QWidget):
+class RenamePathView(QWidget):
     def __init__(self):
         super().__init__()
-        self.line_edit = QtWidgets.QLineEdit()
-        self.browse_button = QtWidgets.QPushButton("Browse")
-        self.path_layout = QtWidgets.QHBoxLayout()
-        self.main_layout = QtWidgets.QGridLayout()
+        self.line_edit = QLineEdit()
+        self.browse_button = QPushButton("Browse")
+        self.path_layout = QHBoxLayout()
+        self.main_layout = QGridLayout()
 
 
-class RenameNewPathView(QtWidgets.QWidget):
+class RenameNewPathView(QWidget):
     def __init__(self):
         super().__init__()
-        self.old_edit = QtWidgets.QLineEdit()
-        self.new_edit = QtWidgets.QLineEdit()
-        self.second_old_edit = QtWidgets.QLineEdit()
-        self.second_new_edit = QtWidgets.QLineEdit()
-        self.rename_button = QtWidgets.QPushButton("Rename")
-        self.plus_button = QtWidgets.QPushButton("+")
-        self.minus_button = QtWidgets.QPushButton("-")
-        self.second_minus_button = QtWidgets.QPushButton("-")
-        self.new_name_layout = QtWidgets.QHBoxLayout()
-        self.rename_button_layout = QtWidgets.QHBoxLayout()
-        self.second_rename_button_layout = QtWidgets.QHBoxLayout()
-        self.plus_button_layout = QtWidgets.QHBoxLayout()
-        self.minus_button_layout = QtWidgets.QHBoxLayout()
+        self.old_edit = QLineEdit()
+        self.new_edit = QLineEdit()
+        self.second_old_edit = QLineEdit()
+        self.second_new_edit = QLineEdit()
+        self.rename_button = QPushButton("Rename")
+        self.plus_button = QPushButton("+")
+        self.minus_button = QPushButton("-")
+        self.second_minus_button = QPushButton("-")
+        self.new_name_layout = QHBoxLayout()
+        self.rename_button_layout = QHBoxLayout()
+        self.second_rename_button_layout = QHBoxLayout()
+        self.plus_button_layout = QHBoxLayout()
+        self.minus_button_layout = QHBoxLayout()

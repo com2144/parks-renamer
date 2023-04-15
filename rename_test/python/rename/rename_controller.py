@@ -62,20 +62,15 @@ class RenamePathController:
         self.newname_model.action_count = len(self.newname_model.action_number)
 
         if self.newname_model.action_count > 0:
-            self.newname_view.rename_button.setParent(None)
             self.newname_view.rename_button.hide()
-            self.newname_view.rename_button_layout.setParent(None)
+            self.newname_view.rename_button.setParent(None)
             self.newname_view.rename_button_layout.removeWidget(self.newname_view.rename_button)
+            self.newname_view.rename_button_layout.setParent(None)
 
         self.newname_view.second_old_edit = QLineEdit()
         self.newname_view.second_new_edit = QLineEdit()
-        self.newname_view.second_name_layout = QHBoxLayout()
-        self.newname_view.second_name_layout.addWidget(self.newname_view.second_old_edit)
-        self.newname_view.second_name_layout.addWidget(self.newname_view.second_new_edit)
 
         self.newname_view.rename_button = QPushButton("Rename")
-        self.newname_view.rename_button_layout = QHBoxLayout()
-        self.newname_view.rename_button_layout.addWidget(self.newname_view.rename_button)
 
         self.newname_model.old_text_widget.append(self.newname_view.second_old_edit)
         self.newname_model.new_text_widget.append(self.newname_view.second_new_edit)
@@ -114,11 +109,26 @@ class RenamePathController:
             self.newname_model.rename_hbox[-1].removeWidget(self.newname_model.old_text_widget[-1])
             self.newname_model.rename_hbox[-1].removeWidget(self.newname_model.new_text_widget[-1])
 
-            self.newname_model.rename_button.pop(-1)
-            self.newname_model.old_text_widget.pop(-1)
-            self.newname_model.new_text_widget.pop(-1)
-            self.newname_model.rename_hbox.pop(-1)
-            self.newname_model.rename_mhbox.pop(-1)
+            self.newname_model.rename_button.pop()
+            self.newname_model.old_text_widget.pop()
+            self.newname_model.new_text_widget.pop()
+            self.newname_model.rename_hbox.pop()
+            self.newname_model.rename_mhbox.pop()
+
+            self.newname_model.action_number.pop()
+            self.newname_model.action_count = len(self.newname_model.action_number)
+
+        self.newname_view.rename_button = QPushButton("Rename")
+        mhbox = QHBoxLayout()
+        mhbox.addWidget(self.newname_view.rename_button)
+
+        if self.newname_model.action_count == 0:
+            self.newname_model.rename_button.append(self.newname_view.rename_button)
+            self.newname_model.rename_mhbox.append(mhbox)
+
+            self.rename_view.main_layout.addLayout(mhbox, 5, 1)
+        # elif self.newname_model.action_count > 0:
+        #     for i in
 
     def set_file_path(self, file_path):
         front_split_path = file_path.split('/')[:-1]

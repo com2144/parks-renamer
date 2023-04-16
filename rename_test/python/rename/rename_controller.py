@@ -59,16 +59,27 @@ class RenamePathController:
                                                         options=options)
         if os.path.exists(self.file_path):
             self.set_file_path(self.file_path)
+            self.newname_model.old_path.append(self.file_path)
+            self.newname_model.old_file_dir_path.append(os.path.dirname(self.file_path))
             self.rename_view.line_edit.setText(os.path.dirname(self.file_path))
-            self.rename_model.old_path.append(self.file_path)
 
     def set_file_path(self, file_path):
-        file_name = os.path.basename(file_path)
-        file_read_name = file_name.split('.')[:-1]
-        file_read_name = ''.join(file_read_name)
+        file_dir, file_ext = os.path.splitext(file_path)
+        self.newname_model.file_ext.append(file_ext)
+        file_read_name = os.path.basename(file_dir)
 
-        if len(self.action_number) == 0 or not self.newname_model.old_text_widget[0].text():
+        if self.action_count == 0 and not self.newname_model.old_text_widget[0].text():
             self.newname_model.old_text_widget[0].setText(file_read_name)
+            return
+
+        if self.action_count > 0 and not self.newname_model.old_text_widget[0].text():
+            self.newname_model.old_text_widget[0].setText(file_read_name)
+            return
+
+        for index, widget in enumerate(self.newname_model.old_text_widget[1:], start=1):
+            if not widget.text():
+                widget.setText(file_read_name)
+                break
 
     def on_plus_button_clicked(self):
         self.action_number.append('action')

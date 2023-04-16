@@ -11,15 +11,12 @@ class RenamePathModel:
 
 class RenameNewPathModel:
     def __init__(self):
-        # self.old_names = []
+        self.old_names = []
         self.old_text_widget = []
         # self.new_names = []
         self.new_text_widget = []
         self.rename_hbox = []
         self.rename_hwidget = []
-        self.rename_vbox = []
-        self.rename_vwidget = []
-
 
 
     def set_new_name(self, file_name):

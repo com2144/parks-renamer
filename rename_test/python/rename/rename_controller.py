@@ -109,8 +109,12 @@ class RenamePathController:
 
     def on_minus_button_clicked(self):
         if self.action_count > 0:
-            self.newname_model.old_text_widget[-1].clear()
-            self.newname_model.new_text_widget[-1].clear()
+            if self.newname_model.old_text_widget[-1].text():
+                self.newname_model.old_path.pop()
+                self.rename_model.old_file_dir_path.pop()
+                self.newname_model.file_ext.pop()
+                self.newname_model.old_text_widget[-1].clear()
+                self.newname_model.new_text_widget[-1].clear()
 
             self.newname_model.old_text_widget[-1].setParent(None)
             self.newname_model.new_text_widget[-1].setParent(None)
@@ -122,10 +126,6 @@ class RenamePathController:
             self.newname_model.new_text_widget.pop()
             self.newname_model.rename_hbox.pop()
             self.newname_model.rename_hwidget.pop()
-
-            self.newname_model.old_path.pop()
-            self.rename_model.old_file_dir_path.pop()
-            self.newname_model.file_ext.pop()
 
             self.action_number.pop()
             self.action_count = len(self.action_number)

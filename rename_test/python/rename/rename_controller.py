@@ -3,6 +3,7 @@ from rename.rename_model import RenamePathModel
 from rename.rename_view import RenamePathView
 from rename.rename_model import RenameNewPathModel
 from rename.rename_view import RenameNewPathView
+import os
 
 
 class RenamePathController:
@@ -11,13 +12,12 @@ class RenamePathController:
         self.rename_view = RenamePathView()
         self.newname_model = RenameNewPathModel()
         self.newname_view = RenameNewPathView()
-        self.file_path = ''
+        self.file_path = self.rename_model.path
         self.action_count = 0
         self.action_number = []
 
     def path_ui(self):
         self.rename_view.line_edit.setPlaceholderText("Enter a file path")
-        self.rename_view.line_edit.textChanged.connect(self.on_text_changed(self.rename_model.path))
 
         self.rename_view.path_layout.addWidget(self.rename_view.line_edit)
         self.rename_view.path_layout.addWidget(self.rename_view.browse_button)
@@ -51,21 +51,24 @@ class RenamePathController:
 
         self.rename_view.setLayout(self.rename_view.main_layout)
 
-    def on_text_changed(self, path):
-        self.rename_model.set_path(path)
-
-    def old_text_changed(self, name):
-        self.newname_model.set_new_name(name)
-
     def on_browse_button_clicked(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         self.file_path, _ = QFileDialog.getOpenFileName(None, "Select file", "",
                                                         "All Files (*)",
                                                         options=options)
-        if self.file_path:
+        if os.path.exists(self.file_path):
             self.set_file_path(self.file_path)
-            self.rename_model.set_path(self.file_path)
+            self.rename_view.line_edit.setText(os.path.dirname(self.file_path))
+            self.rename_model.old_path.append(self.file_path)
+
+    def set_file_path(self, file_path):
+        file_name = os.path.basename(file_path)
+        file_read_name = file_name.split('.')[:-1]
+        file_read_name = ''.join(file_read_name)
+
+        if len(self.action_number) == 0 or not self.newname_model.old_text_widget[0].text():
+            self.newname_model.old_text_widget[0].setText(file_read_name)
 
     def on_plus_button_clicked(self):
         self.action_number.append('action')
@@ -108,21 +111,6 @@ class RenamePathController:
 
             self.action_number.pop()
             self.action_count = len(self.action_number)
-
-    def set_file_path(self, file_path):
-        front_split_path = file_path.split('/')[:-1]
-        file_name = file_path.split('/')[-1]
-        namelist = file_name.split('.')
-        file_ext = namelist[-1]
-        file_ext = ''.join(file_ext)
-        del namelist[-1]
-        file_name = ''.join(namelist)
-        front_merge_path = '/'.join(front_split_path)
-        self.rename_view.line_edit.setText(front_merge_path)
-        self.rename_model.set_path(front_merge_path)
-        # 차례로 들어가도록 수정
-        self.newname_view.old_edit.setText(file_name)
-        self.newname_model.set_new_name(file_name)
 
 
 def main():

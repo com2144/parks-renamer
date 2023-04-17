@@ -122,6 +122,7 @@ class RenamePathController:
             self.newname_model.rename_hwidget[i + 1].setLayout(self.newname_model.rename_hbox[i + 1])
             self.newname_view.new_name_vbox_layout.addWidget(self.newname_model.rename_hwidget[i + 1])
         self.newname_view.widget_vbox_layout.setLayout(self.newname_view.new_name_vbox_layout)
+        self.newname_view.scroll_edit_layout.setWidgetResizable(True)
         self.newname_view.scroll_edit_layout.setWidget(self.newname_view.widget_vbox_layout)
 
     def on_minus_button_clicked(self):

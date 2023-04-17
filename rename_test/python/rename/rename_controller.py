@@ -174,9 +174,10 @@ class RenamePathController:
                 self.deleted_new_text_widget.append(self.newname_model.new_text_widget[i])
                 self.deleted_rename_hbox.append(self.newname_model.rename_hbox[i])
                 self.deleted_rename_hwidget.append(self.newname_model.rename_hwidget[i])
+                self.newname_model.old_text_widget[i].clear()
+                self.newname_model.new_text_widget[i].clear()
+
             for i in range(self.action_count):
-                self.newname_model.old_text_widget[i + 1].clear()
-                self.newname_model.new_text_widget[i + 1].clear()
                 self.newname_model.old_text_widget[i + 1].setParent(None)
                 self.newname_model.new_text_widget[i + 1].setParent(None)
                 self.newname_model.rename_hbox[i + 1].removeWidget(self.newname_model.old_text_widget[i + 1])

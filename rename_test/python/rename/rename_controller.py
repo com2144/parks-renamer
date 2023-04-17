@@ -98,10 +98,6 @@ class RenamePathController:
                 self.newname_model.new_text_widget.append(self.deleted_new_text_widget[i])
                 self.newname_model.rename_hbox.append(self.deleted_rename_hbox[i])
                 self.newname_model.rename_hwidget.append(self.deleted_rename_hwidget[i])
-            self.deleted_old_text_widget.clear()
-            self.deleted_new_text_widget.clear()
-            self.deleted_rename_hbox.clear()
-            self.deleted_rename_hwidget.clear()
         elif self.action_count > 0:
             new_old_edit = QLineEdit()
             new_new_edit = QLineEdit()
@@ -112,6 +108,11 @@ class RenamePathController:
             self.newname_model.new_text_widget.append(new_new_edit)
             self.newname_model.rename_hbox.append(new_hbox_layout)
             self.newname_model.rename_hwidget.append(new_widget_hbox_layout)
+
+        self.deleted_old_text_widget.clear()
+        self.deleted_new_text_widget.clear()
+        self.deleted_rename_hbox.clear()
+        self.deleted_rename_hwidget.clear()
 
         for i in range(self.action_count):
             self.newname_view.second_old_edit = self.newname_model.old_text_widget[i + 1]

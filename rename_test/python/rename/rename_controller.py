@@ -4,6 +4,7 @@ from rename.rename_view import RenamePathView
 from rename.rename_model import RenameNewPathModel
 from rename.rename_view import RenameNewPathView
 import os
+import platform
 
 
 class RenamePathController:
@@ -15,6 +16,11 @@ class RenamePathController:
         self.file_path = self.rename_model.path
         self.action_count = 0
         self.action_number = []
+
+        self.deleted_old_text_widget = []
+        self.deleted_new_text_widget = []
+        self.deleted_rename_hbox = []
+        self.deleted_rename_hwidget = []
 
     def path_ui(self):
         self.rename_view.line_edit.setPlaceholderText("Enter a file path")
@@ -30,6 +36,7 @@ class RenamePathController:
 
         self.newname_view.plus_button.clicked.connect(self.on_plus_button_clicked)
         self.newname_view.minus_button.clicked.connect(self.on_minus_button_clicked)
+        self.newname_view.rename_button.clicked.connect(self.on_rename_button_clicked)
 
         self.newname_view.new_name_layout.addWidget(self.newname_view.old_edit)
         self.newname_view.new_name_layout.addWidget(self.newname_view.new_edit)
@@ -60,7 +67,7 @@ class RenamePathController:
         if os.path.exists(self.file_path):
             self.set_file_path(self.file_path)
             self.newname_model.old_path.append(self.file_path)
-            self.rename_model.old_file_dir_path.append(os.path.dirname(self.file_path))
+            self.rename_model.old_file_dir_path.append(os.path.dirname(self.file_path) + '/')
             self.rename_view.line_edit.setText(os.path.dirname(self.file_path))
 
     def set_file_path(self, file_path):
@@ -85,27 +92,38 @@ class RenamePathController:
         self.action_number.append('action')
         self.action_count = len(self.action_number)
 
-        if self.action_count > 0:
+        if self.action_count > 0 and self.deleted_old_text_widget and self.deleted_new_text_widget and self.deleted_rename_hbox and self.deleted_rename_hwidget:
+            for i in range(self.action_count + 1):
+                self.newname_model.old_text_widget = self.newname_model.old_text_widget.append(
+                    self.deleted_old_text_widget[i])
+                self.newname_model.new_text_widget = self.newname_model.new_text_widget.append(
+                    self.deleted_new_text_widget[i])
+                self.newname_model.rename_hbox = self.newname_model.rename_hbox.append(self.deleted_rename_hbox[i])
+                self.newname_model.rename_hwidget = self.newname_model.rename_hwidget.append(
+                    self.deleted_rename_hwidget[i])
+                self.deleted_old_text_widget.clear()
+                self.deleted_new_text_widget.clear()
+                self.deleted_rename_hbox.clear()
+                self.deleted_rename_hwidget.clear()
+        elif self.action_count > 0:
             new_old_edit = QLineEdit()
             new_new_edit = QLineEdit()
-
             new_hbox_layout = QHBoxLayout()
             new_widget_hbox_layout = QWidget()
-
             self.newname_model.old_text_widget.append(new_old_edit)
             self.newname_model.new_text_widget.append(new_new_edit)
             self.newname_model.rename_hbox.append(new_hbox_layout)
             self.newname_model.rename_hwidget.append(new_widget_hbox_layout)
 
-            for i in range(self.action_count):
-                self.newname_view.second_old_edit = self.newname_model.old_text_widget[i + 1]
-                self.newname_view.second_new_edit = self.newname_model.new_text_widget[i + 1]
-                self.newname_model.rename_hbox[i + 1].addWidget(self.newname_view.second_old_edit)
-                self.newname_model.rename_hbox[i + 1].addWidget(self.newname_view.second_new_edit)
-                self.newname_model.rename_hwidget[i + 1].setLayout(self.newname_model.rename_hbox[i + 1])
-                self.newname_view.new_name_vbox_layout.addWidget(self.newname_model.rename_hwidget[i + 1])
-            self.newname_view.widget_vbox_layout.setLayout(self.newname_view.new_name_vbox_layout)
-            self.newname_view.scroll_edit_layout.setWidget(self.newname_view.widget_vbox_layout)
+        for i in range(self.action_count):
+            self.newname_view.second_old_edit = self.newname_model.old_text_widget[i + 1]
+            self.newname_view.second_new_edit = self.newname_model.new_text_widget[i + 1]
+            self.newname_model.rename_hbox[i + 1].addWidget(self.newname_view.second_old_edit)
+            self.newname_model.rename_hbox[i + 1].addWidget(self.newname_view.second_new_edit)
+            self.newname_model.rename_hwidget[i + 1].setLayout(self.newname_model.rename_hbox[i + 1])
+            self.newname_view.new_name_vbox_layout.addWidget(self.newname_model.rename_hwidget[i + 1])
+        self.newname_view.widget_vbox_layout.setLayout(self.newname_view.new_name_vbox_layout)
+        self.newname_view.scroll_edit_layout.setWidget(self.newname_view.widget_vbox_layout)
 
     def on_minus_button_clicked(self):
         if self.action_count > 0:
@@ -129,6 +147,50 @@ class RenamePathController:
 
             self.action_number.pop()
             self.action_count = len(self.action_number)
+
+    def on_rename_button_clicked(self):
+        for new_text in self.newname_model.new_text_widget:
+            self.newname_model.new_file_name.append(new_text.text())
+
+        # for index, old_text in enumerate(self.newname_model.old_text_widget):
+        #     if old_text.text() and self.newname_model.new_file_name[index] and platform.system() != 'Windows':
+        #         os.rename(self.newname_model.old_path[index], os.path.join(self.rename_model.old_file_dir_path[index],
+        #                                                                    self.newname_model.new_file_name[index] +
+        #                                                                    self.newname_model.file_ext[index]))
+        #     elif platform.system() == 'Windows':
+        #         old_path = self.newname_model.old_path[index]
+        #         old_path = old_path.replace('/', '\\')
+        #         new_path = os.path.join(self.rename_model.old_file_dir_path[index],
+        #                                 self.newname_model.new_file_name[index] + self.newname_model.file_ext[index])
+        #         new_path = new_path.replace('/', '\\')
+        #         os.rename(old_path, new_path)
+        #     else:
+        #         pass
+
+        if self.action_count == 0:
+            self.newname_model.old_text_widget[0].clear()
+            self.newname_model.new_text_widget[0].clear()
+        else:
+            for i in range(self.action_count + 1):
+                self.deleted_old_text_widget.append(self.newname_model.old_text_widget[i])
+                self.deleted_new_text_widget.append(self.newname_model.new_text_widget[i])
+                self.deleted_rename_hbox.append(self.newname_model.rename_hbox[i])
+                self.deleted_rename_hwidget.append(self.newname_model.rename_hwidget[i])
+            for i in range(self.action_count):
+                self.newname_model.old_text_widget[i + 1].clear()
+                self.newname_model.new_text_widget[i + 1].clear()
+                self.newname_model.old_text_widget[i + 1].setParent(None)
+                self.newname_model.new_text_widget[i + 1].setParent(None)
+                self.newname_model.rename_hbox[i + 1].removeWidget(self.newname_model.old_text_widget[i + 1])
+                self.newname_model.rename_hbox[i + 1].removeWidget(self.newname_model.new_text_widget[i + 1])
+
+            self.newname_model.old_text_widget.clear()
+            self.newname_model.new_text_widget.clear()
+            self.newname_model.rename_hbox.clear()
+            self.newname_model.rename_hwidget.clear()
+
+            self.action_number.clear()
+            self.action_count = 0
 
 
 def main():

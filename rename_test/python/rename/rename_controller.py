@@ -94,22 +94,20 @@ class RenamePathController:
 
         if self.action_count > 0 and self.deleted_old_text_widget and self.deleted_new_text_widget and self.deleted_rename_hbox and self.deleted_rename_hwidget:
             for i in range(self.action_count + 1):
-                self.newname_model.old_text_widget = self.newname_model.old_text_widget.append(
-                    self.deleted_old_text_widget[i])
-                self.newname_model.new_text_widget = self.newname_model.new_text_widget.append(
-                    self.deleted_new_text_widget[i])
-                self.newname_model.rename_hbox = self.newname_model.rename_hbox.append(self.deleted_rename_hbox[i])
-                self.newname_model.rename_hwidget = self.newname_model.rename_hwidget.append(
-                    self.deleted_rename_hwidget[i])
-                self.deleted_old_text_widget.clear()
-                self.deleted_new_text_widget.clear()
-                self.deleted_rename_hbox.clear()
-                self.deleted_rename_hwidget.clear()
+                self.newname_model.old_text_widget.append(self.deleted_old_text_widget[i])
+                self.newname_model.new_text_widget.append(self.deleted_new_text_widget[i])
+                self.newname_model.rename_hbox.append(self.deleted_rename_hbox[i])
+                self.newname_model.rename_hwidget.append(self.deleted_rename_hwidget[i])
+            self.deleted_old_text_widget.clear()
+            self.deleted_new_text_widget.clear()
+            self.deleted_rename_hbox.clear()
+            self.deleted_rename_hwidget.clear()
         elif self.action_count > 0:
             new_old_edit = QLineEdit()
             new_new_edit = QLineEdit()
             new_hbox_layout = QHBoxLayout()
             new_widget_hbox_layout = QWidget()
+
             self.newname_model.old_text_widget.append(new_old_edit)
             self.newname_model.new_text_widget.append(new_new_edit)
             self.newname_model.rename_hbox.append(new_hbox_layout)
@@ -152,20 +150,20 @@ class RenamePathController:
         for new_text in self.newname_model.new_text_widget:
             self.newname_model.new_file_name.append(new_text.text())
 
-        # for index, old_text in enumerate(self.newname_model.old_text_widget):
-        #     if old_text.text() and self.newname_model.new_file_name[index] and platform.system() != 'Windows':
-        #         os.rename(self.newname_model.old_path[index], os.path.join(self.rename_model.old_file_dir_path[index],
-        #                                                                    self.newname_model.new_file_name[index] +
-        #                                                                    self.newname_model.file_ext[index]))
-        #     elif platform.system() == 'Windows':
-        #         old_path = self.newname_model.old_path[index]
-        #         old_path = old_path.replace('/', '\\')
-        #         new_path = os.path.join(self.rename_model.old_file_dir_path[index],
-        #                                 self.newname_model.new_file_name[index] + self.newname_model.file_ext[index])
-        #         new_path = new_path.replace('/', '\\')
-        #         os.rename(old_path, new_path)
-        #     else:
-        #         pass
+        for index, old_text in enumerate(self.newname_model.old_text_widget):
+            if old_text.text() and self.newname_model.new_file_name[index] and platform.system() != 'Windows':
+                os.rename(self.newname_model.old_path[index], os.path.join(self.rename_model.old_file_dir_path[index],
+                                                                           self.newname_model.new_file_name[index] +
+                                                                           self.newname_model.file_ext[index]))
+            elif old_text.text() and self.newname_model.new_file_name[index] and platform.system() == 'Windows':
+                old_path = self.newname_model.old_path[index]
+                old_path = old_path.replace('/', '\\')
+                new_path = os.path.join(self.rename_model.old_file_dir_path[index],
+                                        self.newname_model.new_file_name[index] + self.newname_model.file_ext[index])
+                new_path = new_path.replace('/', '\\')
+                os.rename(old_path, new_path)
+            else:
+                pass
 
         if self.action_count == 0:
             self.newname_model.old_text_widget[0].clear()

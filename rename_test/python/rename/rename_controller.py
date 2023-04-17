@@ -22,6 +22,8 @@ class RenamePathController:
         self.deleted_rename_hbox = []
         self.deleted_rename_hwidget = []
 
+        self.closed = 0
+
     def path_ui(self):
         self.rename_view.line_edit.setPlaceholderText("Enter a file path")
 
@@ -115,10 +117,8 @@ class RenamePathController:
         self.deleted_rename_hwidget.clear()
 
         for i in range(self.action_count):
-            self.newname_view.second_old_edit = self.newname_model.old_text_widget[i + 1]
-            self.newname_view.second_new_edit = self.newname_model.new_text_widget[i + 1]
-            self.newname_model.rename_hbox[i + 1].addWidget(self.newname_view.second_old_edit)
-            self.newname_model.rename_hbox[i + 1].addWidget(self.newname_view.second_new_edit)
+            self.newname_model.rename_hbox[i + 1].addWidget(self.newname_model.old_text_widget[i + 1])
+            self.newname_model.rename_hbox[i + 1].addWidget(self.newname_model.new_text_widget[i + 1])
             self.newname_model.rename_hwidget[i + 1].setLayout(self.newname_model.rename_hbox[i + 1])
             self.newname_view.new_name_vbox_layout.addWidget(self.newname_model.rename_hwidget[i + 1])
         self.newname_view.widget_vbox_layout.setLayout(self.newname_view.new_name_vbox_layout)
@@ -166,10 +166,7 @@ class RenamePathController:
             else:
                 pass
 
-        if self.action_count == 0:
-            self.newname_model.old_text_widget[0].clear()
-            self.newname_model.new_text_widget[0].clear()
-        else:
+        if self.action_count > 0:
             for i in range(self.action_count + 1):
                 self.deleted_old_text_widget.append(self.newname_model.old_text_widget[i])
                 self.deleted_new_text_widget.append(self.newname_model.new_text_widget[i])

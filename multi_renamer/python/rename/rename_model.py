@@ -5,7 +5,8 @@ class RenamePathModel:
 
 class RenameNewPathModel:
     def __init__(self):
-        self.old_path = []
+        self.old_full_path = []
+        self.old_dir_name = []
         self.old_file_name = []
         self.old_file_ext = []
         self.new_file_name = []

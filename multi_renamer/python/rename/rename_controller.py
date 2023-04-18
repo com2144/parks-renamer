@@ -73,8 +73,7 @@ class RenamePathController:
         if os.path.exists(self.dir_path):
             self.set_file_path(self.dir_path)
             self.rename_view.line_edit.setText(self.dir_path)
-            self.dir_path = self.dir_path + '/'
-            self.newname_model.old_path.append(self.dir_path)
+            self.newname_model.old_dir_name(self.dir_path)
         if self.dir_path:
             self.show_files_in_directory(self.dir_path)
 
@@ -106,12 +105,16 @@ class RenamePathController:
         file_list = os.listdir(file_path)
         self.newname_model.old_file_name.append(file_list)
 
-        print("aaa", file_list)
+        file_ext_list = []
+        full_path_list = []
 
         for i in file_list:
             file_name, file_ext = os.path.splitext(i)
-            self.newname_model.old_file_ext.append(file_ext)
-            self.newname_model.old_path.append(file_path + '/' + i)
+            file_ext_list.append(file_ext)
+            full_path_list.append(file_path + '/' + i)
+
+        self.newname_model.old_file_ext.append(file_ext_list)
+        self.newname_model.old_full_path.append(full_path_list)
 
         self.browse_action_count += 1
 

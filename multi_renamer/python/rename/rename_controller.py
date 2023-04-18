@@ -73,7 +73,7 @@ class RenamePathController:
         if os.path.exists(self.dir_path):
             self.set_file_path(self.dir_path)
             self.rename_view.line_edit.setText(self.dir_path)
-            self.newname_model.old_dir_name(self.dir_path)
+            self.newname_model.old_dir_name.append(self.dir_path)
         if self.dir_path:
             self.show_files_in_directory(self.dir_path)
 

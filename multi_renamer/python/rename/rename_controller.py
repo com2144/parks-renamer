@@ -15,7 +15,7 @@ class RenamePathController:
         self.newname_view = RenameNewPathView()
         self.dir_path = self.rename_model.path
         self.action_count = 0
-        self.action_number = []
+        self.browse_action_count = 0
 
         self.deleted_old_text_widget = []
         self.deleted_new_text_widget = []
@@ -75,7 +75,8 @@ class RenamePathController:
             self.rename_view.line_edit.setText(self.dir_path)
             self.dir_path = self.dir_path + '/'
             self.newname_model.old_path.append(self.dir_path)
-        self.show_files_in_directory(self.dir_path)
+        if self.dir_path:
+            self.show_files_in_directory(self.dir_path)
 
     def show_files_in_directory(self, directory):
         file_list = os.listdir(directory)
@@ -103,10 +104,20 @@ class RenamePathController:
 
     def set_file_path(self, file_path):
         file_list = os.listdir(file_path)
+        self.newname_model.old_file_name.append(file_list)
+
+        print("aaa", file_list)
 
         for i in file_list:
-            _, file_ext = os.path.splitext(i)
-            self.newname_model.file_ext.append(file_ext)
+            file_name, file_ext = os.path.splitext(i)
+            self.newname_model.old_file_ext.append(file_ext)
+            self.newname_model.old_path.append(file_path + '/' + i)
+
+        self.browse_action_count += 1
+
+        # for i in range(self.browse_action_count):
+        #     second_old_file_name.insert(i, self.newname_model.old_file_name)
+        # print("aaa", second_old_file_name)
 
         # if self.action_count == 0 and not self.newname_model.old_text_widget[0].text():
         #     self.newname_model.old_text_widget[0].setText(file_read_name)
@@ -126,8 +137,7 @@ class RenamePathController:
         #         break
 
     def on_plus_button_clicked(self):
-        self.action_number.append('action')
-        self.action_count = len(self.action_number)
+        self.action_count += 1
 
         if self.action_count > 0 and self.deleted_old_text_widget and self.deleted_new_text_widget and self.deleted_rename_hbox and self.deleted_rename_hwidget:
             for i in range(self.action_count + 1):
@@ -165,7 +175,7 @@ class RenamePathController:
         if self.action_count > 0:
             if self.newname_model.old_text_widget[-1].text():
                 self.newname_model.old_path.pop()
-                self.newname_model.file_ext.pop()
+                self.newname_model.old_file_ext.pop()
                 self.newname_model.old_text_widget[-1].clear()
                 self.newname_model.new_text_widget[-1].clear()
 
@@ -181,27 +191,27 @@ class RenamePathController:
             self.newname_model.rename_hbox.pop()
             self.newname_model.rename_hwidget.pop()
 
-            self.action_number.pop()
-            self.action_count = len(self.action_number)
+            self.action_count -= 1
 
     def on_rename_button_clicked(self):
-        for new_text in self.newname_model.new_text_widget:
-            self.newname_model.new_file_name.append(new_text.text())
 
-        for index, old_text in enumerate(self.newname_model.old_text_widget):
-            if old_text.text() and self.newname_model.new_file_name[index] and platform.system() != 'Windows':
-                os.rename(self.newname_model.old_path[index], os.path.join(self.rename_model.old_file_dir_path[index],
-                                                                           self.newname_model.new_file_name[index] +
-                                                                           self.newname_model.file_ext[index]))
-            elif old_text.text() and self.newname_model.new_file_name[index] and platform.system() == 'Windows':
-                old_path = self.newname_model.old_path[index]
-                old_path = old_path.replace('/', '\\')
-                new_path = os.path.join(self.rename_model.old_file_dir_path[index],
-                                        self.newname_model.new_file_name[index] + self.newname_model.file_ext[index])
-                new_path = new_path.replace('/', '\\')
-                os.rename(old_path, new_path)
-            else:
-                pass
+        # for new_text in self.newname_model.new_text_widget:
+        #     self.newname_model.new_file_name.append(new_text.text())
+        #
+        # for index, old_text in enumerate(self.newname_model.old_text_widget):
+        #     if old_text.text() and self.newname_model.new_file_name[index] and platform.system() != 'Windows':
+        #         os.rename(self.newname_model.old_path[index], os.path.join(self.rename_model.old_file_dir_path[index],
+        #                                                                    self.newname_model.new_file_name[index] +
+        #                                                                    self.newname_model.file_ext[index]))
+        #     elif old_text.text() and self.newname_model.new_file_name[index] and platform.system() == 'Windows':
+        #         old_path = self.newname_model.old_path[index]
+        #         old_path = old_path.replace('/', '\\')
+        #         new_path = os.path.join(self.rename_model.old_file_dir_path[index],
+        #                                 self.newname_model.new_file_name[index] + self.newname_model.file_ext[index])
+        #         new_path = new_path.replace('/', '\\')
+        #         os.rename(old_path, new_path)
+        #     else:
+        #         pass
 
         if self.action_count > 0:
             for i in range(self.action_count + 1):
@@ -224,10 +234,9 @@ class RenamePathController:
             self.newname_model.rename_hbox.clear()
             self.newname_model.rename_hwidget.clear()
 
-            self.action_number.clear()
             self.action_count = 0
 
-            if self.file_list_dialog:
+            if hasattr(self, 'file_list_dialog'):
                 self.file_list_dialog.close()
 
 

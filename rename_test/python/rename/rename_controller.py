@@ -82,6 +82,10 @@ class RenamePathController:
             self.newname_model.old_text_widget[0].setText(file_read_name)
             return
 
+        if self.action_count == 0 and self.newname_model.old_text_widget[0].text():
+            self.newname_model.old_text_widget[0].clear()
+            self.newname_model.old_text_widget[0].setText(file_read_name)
+
         if self.action_count > 0 and not self.newname_model.old_text_widget[0].text():
             self.newname_model.old_text_widget[0].setText(file_read_name)
             return

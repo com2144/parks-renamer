@@ -1,7 +1,6 @@
 class RenamePathModel:
     def __init__(self):
         self.path = ''
-        self.old_file_dir_path = []
 
 
 class RenameNewPathModel:

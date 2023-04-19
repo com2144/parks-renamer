@@ -73,7 +73,6 @@ class RenamePathController:
         if os.path.exists(self.dir_path):
             self.set_file_path(self.dir_path)
             self.rename_view.line_edit.setText(self.dir_path)
-            self.newname_model.old_dir_name.append(self.dir_path)
         if self.dir_path:
             self.show_files_in_directory(self.dir_path)
 
@@ -85,8 +84,9 @@ class RenamePathController:
 
         list_widget = QListWidget(file_list_dialog)
         for file in file_list:
-            file_name, _ = os.path.splitext(file)
-            list_widget.addItem(file_name)
+            file_name, file_ext = os.path.splitext(file)
+            if not file_ext == '':
+                list_widget.addItem(file_name)
 
         dialog_layout = QVBoxLayout()
         dialog_layout.addWidget(list_widget)
@@ -113,31 +113,11 @@ class RenamePathController:
             file_ext_list.append(file_ext)
             full_path_list.append(file_path + '/' + i)
 
+        self.newname_model.old_dir_name.append(file_path + '/')
         self.newname_model.old_file_ext.append(file_ext_list)
         self.newname_model.old_full_path.append(full_path_list)
 
         self.browse_action_count += 1
-
-        # for i in range(self.browse_action_count):
-        #     second_old_file_name.insert(i, self.newname_model.old_file_name)
-        # print("aaa", second_old_file_name)
-
-        # if self.action_count == 0 and not self.newname_model.old_text_widget[0].text():
-        #     self.newname_model.old_text_widget[0].setText(file_read_name)
-        #     return
-        #
-        # if self.action_count == 0 and self.newname_model.old_text_widget[0].text():
-        #     self.newname_model.old_text_widget[0].clear()
-        #     self.newname_model.old_text_widget[0].setText(file_read_name)
-        #
-        # if self.action_count > 0 and not self.newname_model.old_text_widget[0].text():
-        #     self.newname_model.old_text_widget[0].setText(file_read_name)
-        #     return
-        #
-        # for index, widget in enumerate(self.newname_model.old_text_widget[1:], start=1):
-        #     if not widget.text():
-        #         widget.setText(file_read_name)
-        #         break
 
     def on_plus_button_clicked(self):
         self.action_count += 1
@@ -177,8 +157,6 @@ class RenamePathController:
     def on_minus_button_clicked(self):
         if self.action_count > 0:
             if self.newname_model.old_text_widget[-1].text():
-                self.newname_model.old_path.pop()
-                self.newname_model.old_file_ext.pop()
                 self.newname_model.old_text_widget[-1].clear()
                 self.newname_model.new_text_widget[-1].clear()
 
@@ -231,6 +209,11 @@ class RenamePathController:
                 self.newname_model.rename_hbox[i + 1].removeWidget(self.newname_model.old_text_widget[i + 1])
                 self.newname_model.rename_hbox[i + 1].removeWidget(self.newname_model.new_text_widget[i + 1])
                 self.newname_view.new_name_vbox_layout.takeAt(self.newname_view.new_name_vbox_layout.count() - 1)
+
+            self.newname_model.old_full_path.clear()
+            self.newname_model.old_dir_name.clear()
+            self.newname_model.old_file_name.clear()
+            self.newname_model.old_file_ext.clear()
 
             self.newname_model.old_text_widget.clear()
             self.newname_model.new_text_widget.clear()

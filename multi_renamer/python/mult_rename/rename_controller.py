@@ -15,7 +15,6 @@ class RenamePathController:
         self.newname_view = RenameNewPathView()
         self.dir_path = self.rename_model.path
         self.action_count = 0
-        self.browse_action_count = 0
 
         self.deleted_old_text_widget = []
         self.deleted_new_text_widget = []
@@ -62,6 +61,11 @@ class RenamePathController:
         self.rename_view.setLayout(self.rename_view.main_layout)
 
     def on_browse_button_clicked(self):
+        self.newname_model.old_full_path.clear()
+        self.newname_model.old_dir_name.clear()
+        self.newname_model.old_file_name.clear()
+        self.newname_model.old_file_ext.clear()
+
         if hasattr(self, 'file_list_dialog'):
             self.file_list_dialog.close()
 
@@ -103,25 +107,15 @@ class RenamePathController:
 
     def set_file_path(self, file_path):
         file_list = os.listdir(file_path)
-        self.newname_model.old_file_name.append(file_list)
 
-        file_ext_list = []
-        full_path_list = []
-
-        for i in file_list:
-            file_name, file_ext = os.path.splitext(i)
-            file_ext_list.append(file_ext)
-            full_path_list.append(file_path + '/' + i)
-
-        if self.action_count != 0:
-            self.newname_model.old_dir_name.append(file_path + '/')
-            self.newname_model.old_file_ext.append(file_ext_list)
-            self.newname_model.old_full_path.append(full_path_list)
-
-            self.browse_action_count += 1
-        else:
-            self.newname_model.old_dir_name.insert(0, file_path + '/')
-            self.newname_model.old_file_ext
+        for index, dir_name in enumerate(file_list):
+            full_path = file_path + '/' + dir_name
+            if os.path.exists(full_path):
+                self.newname_model.old_full_path.append(full_path)
+            file_name, file_ext = os.path.splitext(dir_name)
+            self.newname_model.old_dir_name.insert(index, file_path + '/')
+            self.newname_model.old_file_name.append(file_name)
+            self.newname_model.old_file_ext.append(file_ext)
 
     def on_plus_button_clicked(self):
         self.action_count += 1
@@ -180,7 +174,6 @@ class RenamePathController:
 
     def on_rename_button_clicked(self):
 
-
         # for new_text in self.newname_model.new_text_widget:
         #     self.newname_model.new_file_name.append(new_text.text())
         #
@@ -217,7 +210,6 @@ class RenamePathController:
 
             self.newname_model.old_full_path.clear()
             self.newname_model.old_dir_name.clear()
-            self.newname_model.old_file_name.clear()
             self.newname_model.old_file_ext.clear()
 
             self.newname_model.old_text_widget.clear()

@@ -2,14 +2,6 @@ from PySide2.QtWidgets import *
 import os
 
 
-# class RenamePathView(QWidget):
-#     def __init__(self):
-#         super().__init__()
-#         self.line_edit = QLineEdit()
-#         self.browse_button = QPushButton("Browse")
-#         self.path_layout = QHBoxLayout()
-#         self.main_layout = QGridLayout()
-
 class RenamePathView(QWidget):
     def __init__(self):
         super().__init__()
@@ -29,11 +21,23 @@ class FileListDialog(QDialog):
         self.setLayout(self.dialog_layout)
         self.setModal(False)
 
+        # self.list_widget.itemDoubleClicked.connect(self.on_item_double_clicked)
+
     def set_files(self, file_list):
         for file in file_list:
             file_name, file_ext = os.path.splitext(file)
             if not file_ext == '':
                 self.list_widget.addItem(file_name)
+
+
+class BrowseDialog(QFileDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        ow = self.Options()
+        ow |= self.DontUseNativeDialog
+        ow |= self.ShowDirsOnly
+        ow = self.getExistingDirectory(None, "Select Directory", "", options=ow)
+        self.option = ow
 
 
 class RenameNewPathView(QWidget):

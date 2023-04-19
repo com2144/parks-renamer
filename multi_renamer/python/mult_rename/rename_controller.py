@@ -4,6 +4,7 @@ from mult_rename.rename_view import RenamePathView
 from mult_rename.rename_model import RenameNewPathModel
 from mult_rename.rename_view import RenameNewPathView
 from mult_rename.rename_view import FileListDialog
+from mult_rename.rename_view import BrowseDialog
 import os
 import platform
 
@@ -79,6 +80,8 @@ class RenamePathController:
     def on_file_list_dialog_finished(self):
         self.file_list_dialog = None
 
+    # def on_item_double_clicked(self, item):
+
     def on_browse_button_clicked(self):
         self.browse_count = True
         self.newname_model.old_full_path.clear()
@@ -89,10 +92,8 @@ class RenamePathController:
         if self.file_list_dialog is not None:
             self.file_list_dialog.close()
 
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        options |= QFileDialog.ShowDirsOnly
-        self.dir_path = QFileDialog.getExistingDirectory(None, "Select Directory", "", options=options)
+        browse_window = BrowseDialog()
+        self.dir_path = browse_window.option
 
         if os.path.exists(self.dir_path):
             self.set_file_path(self.dir_path)
@@ -170,13 +171,26 @@ class RenamePathController:
     def on_rename_button_clicked(self):
         for old_text in self.newname_model.old_text_widget:
             self.newname_model.old_file_user_name.append(old_text.text())
+        for new_text in self.newname_model.new_text_widget:
+            self.newname_model.new_file_name.append(new_text.text())
 
         if self.action_count == 0 and self.newname_model.old_file_user_name[0] == '':
             self.show_warning('Writing a file name')
 
-        if self.action_count == 0 and self.newname_model.old_file_user_name[0] != '' and self.browse_count:
-            print("aaa", self.newname_model.old_dir_name)
-            # user_full_path =
+        if self.action_count == 0 and self.newname_model.old_file_user_name[0] != '' and self.browse_count and \
+                self.newname_model.old_file_user_name[0] in self.newname_model.old_full_path[0]:
+            for i in self.newname_model.old_full_path:
+                print('1')
+
+            # user_full_path = self.newname_model.old_dir_name[0] + self.newname_model.old_file_user_name[0] + self.newname_model.old_file_ext[0]
+            # if not os.path.exists(user_full_path):
+            #     self.newname_model.old_text_widget[0].clear()
+            #     self.show_warning(f'{self.newname_model.old_file_user_name[0]} file is not exist.')
+            # else:
+            #     for i in range(len(self.newname_model.new_file_name)+1):
+            #         user_full_path.replace(self.newname_model.old_file_user_name[0], self.newname_model.new_file_name[i])
+            #         print("aaa", user_full_path)
+            # os.rename
 
         # for new_text in self.newname_model.new_text_widget:
         #     self.newname_model.new_file_name.append(new_text.text())

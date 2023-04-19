@@ -3,6 +3,7 @@ from mult_rename.rename_model import RenamePathModel
 from mult_rename.rename_view import RenamePathView
 from mult_rename.rename_model import RenameNewPathModel
 from mult_rename.rename_view import RenameNewPathView
+from mult_rename.rename_view import FileListDialog
 import os
 import platform
 
@@ -13,8 +14,12 @@ class RenamePathController:
         self.rename_view = RenamePathView()
         self.newname_model = RenameNewPathModel()
         self.newname_view = RenameNewPathView()
+
         self.dir_path = self.rename_model.path
         self.action_count = 0
+        self.browse_count = False
+
+        self.file_list_dialog = None
 
         self.deleted_old_text_widget = []
         self.deleted_new_text_widget = []
@@ -22,6 +27,8 @@ class RenamePathController:
         self.deleted_rename_hwidget = []
 
         self.closed = 0
+
+        self.path_ui()
 
     def path_ui(self):
         self.rename_view.line_edit.setPlaceholderText("Enter a file path")
@@ -60,13 +67,26 @@ class RenamePathController:
 
         self.rename_view.setLayout(self.rename_view.main_layout)
 
+    def show_files_in_directory(self, directory):
+        file_list = os.listdir(directory)
+
+        self.file_list_dialog = FileListDialog(self.rename_view)
+        self.file_list_dialog.set_files(file_list)
+
+        self.file_list_dialog.show()
+        self.file_list_dialog.finished.connect(self.on_file_list_dialog_finished)
+
+    def on_file_list_dialog_finished(self):
+        self.file_list_dialog = None
+
     def on_browse_button_clicked(self):
+        self.browse_count = True
         self.newname_model.old_full_path.clear()
         self.newname_model.old_dir_name.clear()
-        self.newname_model.old_file_name.clear()
+        self.newname_model.old_file_user_name.clear()
         self.newname_model.old_file_ext.clear()
 
-        if hasattr(self, 'file_list_dialog'):
+        if self.file_list_dialog is not None:
             self.file_list_dialog.close()
 
         options = QFileDialog.Options()
@@ -80,31 +100,6 @@ class RenamePathController:
         if self.dir_path:
             self.show_files_in_directory(self.dir_path)
 
-    def show_files_in_directory(self, directory):
-        file_list = os.listdir(directory)
-
-        file_list_dialog = QDialog()
-        file_list_dialog.setWindowTitle("Files in Directory")
-
-        list_widget = QListWidget(file_list_dialog)
-        for file in file_list:
-            file_name, file_ext = os.path.splitext(file)
-            if not file_ext == '':
-                list_widget.addItem(file_name)
-
-        dialog_layout = QVBoxLayout()
-        dialog_layout.addWidget(list_widget)
-        file_list_dialog.setLayout(dialog_layout)
-
-        file_list_dialog.setModal(False)
-
-        self.file_list_dialog = file_list_dialog
-
-        file_list_dialog.finished.connect(lambda: delattr(self, 'file_list_dialog'))
-
-        file_list_dialog.show()
-        file_list_dialog.exec_()
-
     def set_file_path(self, file_path):
         file_list = os.listdir(file_path)
 
@@ -114,7 +109,7 @@ class RenamePathController:
                 self.newname_model.old_full_path.append(full_path)
             file_name, file_ext = os.path.splitext(dir_name)
             self.newname_model.old_dir_name.insert(index, file_path + '/')
-            self.newname_model.old_file_name.append(file_name)
+            self.newname_model.old_file_real_name.append(file_name)
             self.newname_model.old_file_ext.append(file_ext)
 
     def on_plus_button_clicked(self):
@@ -173,6 +168,15 @@ class RenamePathController:
             self.action_count -= 1
 
     def on_rename_button_clicked(self):
+        for old_text in self.newname_model.old_text_widget:
+            self.newname_model.old_file_user_name.append(old_text.text())
+
+        if self.action_count == 0 and self.newname_model.old_file_user_name[0] == '':
+            self.show_warning('Writing a file name')
+
+        if self.action_count == 0 and self.newname_model.old_file_user_name[0] != '' and self.browse_count:
+            print("aaa", self.newname_model.old_dir_name)
+            # user_full_path =
 
         # for new_text in self.newname_model.new_text_widget:
         #     self.newname_model.new_file_name.append(new_text.text())
@@ -210,6 +214,7 @@ class RenamePathController:
 
             self.newname_model.old_full_path.clear()
             self.newname_model.old_dir_name.clear()
+            self.newname_model.old_file_real_name.clear()
             self.newname_model.old_file_ext.clear()
 
             self.newname_model.old_text_widget.clear()
@@ -218,18 +223,28 @@ class RenamePathController:
             self.newname_model.rename_hwidget.clear()
 
             self.action_count = 0
+            self.browse_count = False
 
-            if hasattr(self, 'file_list_dialog'):
+            if self.file_list_dialog is not None:
                 self.file_list_dialog.close()
+
+    @staticmethod
+    def show_warning(error_message):
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Warning)
+        msg_box.setText(f"{error_message}")
+        msg_box.setWindowTitle("Warning")
+        msg_box.setStandardButtons(QMessageBox.Ok)
+        msg_box.exec_()
 
 
 def main():
     app = QApplication()
-    window = QMainWindow()
     controller = RenamePathController()
-    window.setCentralWidget(controller.path_ui())
-    controller.rename_view.setWindowTitle("Renamer")
-    controller.rename_view.show()
+    window = QMainWindow()
+    window.setCentralWidget(controller.rename_view)
+    window.setWindowTitle("Renamer")
+    window.show()
     app.exec_()
 
 

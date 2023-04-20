@@ -21,12 +21,10 @@ class FileListDialog(QDialog):
         self.setLayout(self.dialog_layout)
         self.setModal(False)
 
-        # self.list_widget.itemDoubleClicked.connect(self.on_item_double_clicked)
-
     def set_files(self, file_list):
         for file in file_list:
             file_name, file_ext = os.path.splitext(file)
-            if not file_ext == '':
+            if file_ext != '':
                 self.list_widget.addItem(file_name)
 
 

@@ -68,6 +68,27 @@ class RenamePathController:
 
         self.rename_view.setLayout(self.rename_view.main_layout)
 
+    def on_browse_button_clicked(self):
+        self.browse_count = True
+        self.newname_model.old_full_path.clear()
+        self.newname_model.old_dir_name.clear()
+        self.newname_model.old_file_user_name.clear()
+        self.newname_model.old_file_ext.clear()
+
+        if self.file_list_dialog is not None:
+            self.file_list_dialog.close()
+
+        browse_option = BrowseDialog()
+        self.dir_path = browse_option.option
+
+        if os.path.exists(self.dir_path):
+            self.set_file_path(self.dir_path)
+            self.rename_view.line_edit.setText(self.dir_path)
+            if not self.check_files_exist(self.dir_path):
+                self.show_warning("The selected directory contains no files.")
+            else:
+                self.show_files_in_directory(self.dir_path)
+
     def show_files_in_directory(self, directory):
         file_list = os.listdir(directory)
 
@@ -80,26 +101,14 @@ class RenamePathController:
     def on_file_list_dialog_finished(self):
         self.file_list_dialog = None
 
-    # def on_item_double_clicked(self, item):
-
-    def on_browse_button_clicked(self):
-        self.browse_count = True
-        self.newname_model.old_full_path.clear()
-        self.newname_model.old_dir_name.clear()
-        self.newname_model.old_file_user_name.clear()
-        self.newname_model.old_file_ext.clear()
-
-        if self.file_list_dialog is not None:
-            self.file_list_dialog.close()
-
-        browse_window = BrowseDialog()
-        self.dir_path = browse_window.option
-
-        if os.path.exists(self.dir_path):
-            self.set_file_path(self.dir_path)
-            self.rename_view.line_edit.setText(self.dir_path)
-        if self.dir_path:
-            self.show_files_in_directory(self.dir_path)
+    @staticmethod
+    def check_files_exist(dir_path):
+        for entry in os.listdir(dir_path):
+            confine_path = dir_path + '/' + entry
+            _, file_ext = os.path.splitext(confine_path)
+            if file_ext != '':
+                return True
+        return False
 
     def set_file_path(self, file_path):
         file_list = os.listdir(file_path)
@@ -246,8 +255,8 @@ class RenamePathController:
     def show_warning(error_message):
         msg_box = QMessageBox()
         msg_box.setIcon(QMessageBox.Warning)
-        msg_box.setText(f"{error_message}")
         msg_box.setWindowTitle("Warning")
+        msg_box.setText(f"{error_message}")
         msg_box.setStandardButtons(QMessageBox.Ok)
         msg_box.exec_()
 

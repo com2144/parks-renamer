@@ -83,6 +83,7 @@ class RenamePathController:
 
         if self.dir_path == '':
             self.show_warning('Choose the directory')
+            self.window_all_clear()
             return
 
         if not self.check_files_exist(self.dir_path):
@@ -188,22 +189,14 @@ class RenamePathController:
         for new_text in self.newname_model.new_text_widget:
             self.newname_model.new_file_name.append(new_text.text())
 
-        if self.action_count == 0 and self.browse_count == 0:
-            self.show_warning('Push the browse button.')
-            self.newname_model.old_text_widget[0].clear()
-            self.newname_model.new_text_widget[0].clear()
-
-        if self.action_count == 0 and self.browse_count > 0 and self.newname_model.old_file_user_name[0] == '':
-            self.show_warning('Writing a file name.')
-            self.newname_model.old_text_widget[0].clear()
-            self.newname_model.new_text_widget[0].clear()
-
-        if self.action_count == 0 and self.newname_model.old_file_user_name[0] != '' and self.browse_count > 0 and \
-                self.newname_model.old_file_user_name[0] in self.newname_model.old_full_path[0]:
+        if self.action_count == 0 and self.browse_count and self.newname_model.old_file_user_name[0] and \
+                self.newname_model.new_file_name[0] and self.newname_model.old_file_user_name[0] in \
+                self.newname_model.old_full_path[0]:
             for index, full_path in enumerate(self.newname_model.old_full_path):
                 origin_full_path = self.newname_model.old_full_path[index]
                 origin_file_name = origin_full_path.split("/")[-1]
-                new_file_name = origin_file_name.replace(self.newname_model.old_file_user_name[0], self.newname_model.new_file_name[0])
+                new_file_name = origin_file_name.replace(self.newname_model.old_file_user_name[0],
+                                                         self.newname_model.new_file_name[0])
                 new_full_path = '/'.join(origin_full_path.split("/")[:-1]) + '/' + new_file_name
 
                 if platform.system() == 'Windows':
@@ -211,11 +204,23 @@ class RenamePathController:
                     self.newname_model.old_full_path[0] = self.newname_model.old_full_path[0].replace('/', '\\')
 
                 os.rename(self.newname_model.old_full_path[0], new_full_path)
-            self.newname_model.old_text_widget[0].clear()
-            self.newname_model.new_text_widget[0].clear()
+            self.window_all_clear()
+            return
 
+        elif not self.browse_count:
+            self.show_warning('Push the browse button.')
+            self.window_all_clear()
+            return
 
+        for i in range(self.action_count+1):
+            if self.newname_model.old_file_user_name[i] != '' and self.newname_model.new_file_name[i] != '':
+                pass
+            else:
+                self.show_warning('Writing a file name.')
+                self.window_all_clear()
+                return
 
+    def window_all_clear(self):
         if self.action_count > 0:
             for i in range(self.action_count + 1):
                 self.deleted_old_text_widget.append(self.newname_model.old_text_widget[i])
@@ -231,22 +236,27 @@ class RenamePathController:
                 self.newname_model.rename_hbox[i + 1].removeWidget(self.newname_model.old_text_widget[i + 1])
                 self.newname_model.rename_hbox[i + 1].removeWidget(self.newname_model.new_text_widget[i + 1])
                 self.newname_view.new_name_vbox_layout.takeAt(self.newname_view.new_name_vbox_layout.count() - 1)
+        else:
+            self.newname_model.old_text_widget[self.action_count].clear()
+            self.newname_model.new_text_widget[self.action_count].clear()
 
-            self.newname_model.old_full_path.clear()
-            self.newname_model.old_dir_name.clear()
-            self.newname_model.old_file_real_name.clear()
-            self.newname_model.old_file_ext.clear()
+        self.newname_model.old_full_path.clear()
+        self.newname_model.old_dir_name.clear()
+        self.newname_model.old_file_real_name.clear()
+        self.newname_model.old_file_ext.clear()
 
-            self.newname_model.old_text_widget.clear()
-            self.newname_model.new_text_widget.clear()
-            self.newname_model.rename_hbox.clear()
-            self.newname_model.rename_hwidget.clear()
+        self.newname_model.old_text_widget.clear()
+        self.newname_model.new_text_widget.clear()
+        self.newname_model.rename_hbox.clear()
+        self.newname_model.rename_hwidget.clear()
 
-            self.action_count = 0
-            self.browse_count = False
+        self.rename_view.line_edit.clear()
 
-            if self.file_list_dialog is not None:
-                self.file_list_dialog.close()
+        self.action_count = 0
+        self.browse_count = False
+
+        if self.file_list_dialog is not None:
+            self.file_list_dialog.close()
 
     @staticmethod
     def show_warning(error_message):

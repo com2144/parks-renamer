@@ -81,13 +81,17 @@ class RenamePathController:
         browse_option = BrowseDialog()
         self.dir_path = browse_option.option
 
-        if os.path.exists(self.dir_path):
+        if self.dir_path == '':
+            self.show_warning('Choose the directory')
+            return
+
+        if not self.check_files_exist(self.dir_path):
+            self.show_warning("The selected directory contains no files.")
+            browse_option.close()
+        else:
             self.set_file_path(self.dir_path)
             self.rename_view.line_edit.setText(self.dir_path)
-            if not self.check_files_exist(self.dir_path):
-                self.show_warning("The selected directory contains no files.")
-            else:
-                self.show_files_in_directory(self.dir_path)
+            self.show_files_in_directory(self.dir_path)
 
     def show_files_in_directory(self, directory):
         file_list = os.listdir(directory)
@@ -103,12 +107,13 @@ class RenamePathController:
 
     @staticmethod
     def check_files_exist(dir_path):
-        for entry in os.listdir(dir_path):
-            confine_path = dir_path + '/' + entry
-            _, file_ext = os.path.splitext(confine_path)
-            if file_ext != '':
-                return True
-        return False
+        if os.path.exists(dir_path):
+            for entry in os.listdir(dir_path):
+                confine_path = dir_path + '/' + entry
+                _, file_ext = os.path.splitext(confine_path)
+                if file_ext != '':
+                    return True
+            return False
 
     def set_file_path(self, file_path):
         file_list = os.listdir(file_path)
@@ -183,41 +188,33 @@ class RenamePathController:
         for new_text in self.newname_model.new_text_widget:
             self.newname_model.new_file_name.append(new_text.text())
 
-        if self.action_count == 0 and self.newname_model.old_file_user_name[0] == '':
-            self.show_warning('Writing a file name')
+        if self.action_count == 0 and self.browse_count == 0:
+            self.show_warning('Push the browse button.')
+            self.newname_model.old_text_widget[0].clear()
+            self.newname_model.new_text_widget[0].clear()
 
-        if self.action_count == 0 and self.newname_model.old_file_user_name[0] != '' and self.browse_count and \
+        if self.action_count == 0 and self.browse_count > 0 and self.newname_model.old_file_user_name[0] == '':
+            self.show_warning('Writing a file name.')
+            self.newname_model.old_text_widget[0].clear()
+            self.newname_model.new_text_widget[0].clear()
+
+        if self.action_count == 0 and self.newname_model.old_file_user_name[0] != '' and self.browse_count > 0 and \
                 self.newname_model.old_file_user_name[0] in self.newname_model.old_full_path[0]:
-            for i in self.newname_model.old_full_path:
-                print('1')
+            for index, full_path in enumerate(self.newname_model.old_full_path):
+                origin_full_path = self.newname_model.old_full_path[index]
+                origin_file_name = origin_full_path.split("/")[-1]
+                new_file_name = origin_file_name.replace(self.newname_model.old_file_user_name[0], self.newname_model.new_file_name[0])
+                new_full_path = '/'.join(origin_full_path.split("/")[:-1]) + '/' + new_file_name
 
-            # user_full_path = self.newname_model.old_dir_name[0] + self.newname_model.old_file_user_name[0] + self.newname_model.old_file_ext[0]
-            # if not os.path.exists(user_full_path):
-            #     self.newname_model.old_text_widget[0].clear()
-            #     self.show_warning(f'{self.newname_model.old_file_user_name[0]} file is not exist.')
-            # else:
-            #     for i in range(len(self.newname_model.new_file_name)+1):
-            #         user_full_path.replace(self.newname_model.old_file_user_name[0], self.newname_model.new_file_name[i])
-            #         print("aaa", user_full_path)
-            # os.rename
+                if platform.system() == 'Windows':
+                    new_full_path = new_full_path.replace('/', '\\')
+                    self.newname_model.old_full_path[0] = self.newname_model.old_full_path[0].replace('/', '\\')
 
-        # for new_text in self.newname_model.new_text_widget:
-        #     self.newname_model.new_file_name.append(new_text.text())
-        #
-        # for index, old_text in enumerate(self.newname_model.old_text_widget):
-        #     if old_text.text() and self.newname_model.new_file_name[index] and platform.system() != 'Windows':
-        #         os.rename(self.newname_model.old_path[index], os.path.join(self.rename_model.old_file_dir_path[index],
-        #                                                                    self.newname_model.new_file_name[index] +
-        #                                                                    self.newname_model.file_ext[index]))
-        #     elif old_text.text() and self.newname_model.new_file_name[index] and platform.system() == 'Windows':
-        #         old_path = self.newname_model.old_path[index]
-        #         old_path = old_path.replace('/', '\\')
-        #         new_path = os.path.join(self.rename_model.old_file_dir_path[index],
-        #                                 self.newname_model.new_file_name[index] + self.newname_model.file_ext[index])
-        #         new_path = new_path.replace('/', '\\')
-        #         os.rename(old_path, new_path)
-        #     else:
-        #         pass
+                os.rename(self.newname_model.old_full_path[0], new_full_path)
+            self.newname_model.old_text_widget[0].clear()
+            self.newname_model.new_text_widget[0].clear()
+
+
 
         if self.action_count > 0:
             for i in range(self.action_count + 1):

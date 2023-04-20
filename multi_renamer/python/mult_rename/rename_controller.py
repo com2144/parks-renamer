@@ -189,33 +189,42 @@ class RenamePathController:
         for new_text in self.newname_model.new_text_widget:
             self.newname_model.new_file_name.append(new_text.text())
 
-        for i in range(self.action_count+1):
-            if self.browse_count and self.newname_model.old_file_user_name[i] != '' and self.newname_model.new_file_name[i] != '' and self.newname_model.old_file_user_name[i] in self.newname_model.old_full_path[i]:
-                for index, full_path in enumerate(self.newname_model.old_full_path):
-                    origin_full_path = self.newname_model.old_full_path[index]
-                    origin_file_name = origin_full_path.split("/")[-1]
-                    new_file_name = origin_file_name.replace(self.newname_model.old_file_user_name[0], self.newname_model.new_file_name[0])
-                    new_full_path = '/'.join(origin_full_path.split("/")[:-1]) + '/' + new_file_name
-                    if platform.system() == 'Windows':
-                        new_full_path = new_full_path.replace('/', '\\')
-                        self.newname_model.old_full_path[index] = self.newname_model.old_full_path[index].replace('/', '\\')
-                    os.rename(self.newname_model.old_full_path[index], new_full_path)
-                self.window_all_clear()
-
-            elif not self.browse_count:
-                self.show_warning('Push the browse button.')
-                self.window_all_clear()
-                return
-
-            elif self.newname_model.old_file_user_name[i] not in self.newname_model.old_full_path[i]:
-                self.show_warning('File name does not exist.')
-                self.window_all_clear()
-                return
-
-            else:
-                self.show_warning('Writing a file name.')
-                self.window_all_clear()
-                return
+        for i in range(self.action_count + 1):
+            if self.browse_count and self.newname_model.old_file_user_name[i] != '' and self.newname_model.new_file_name[i] != '':
+                print("aaa", self.newname_model.old_file_user_name[i])
+        #         print("aaa", self.newname_model.old_file_user_name[i])
+        #         for j in range(len(self.newname_model.old_full_path)):
+        #             print("Bbb", self.newname_model.old_full_path[j])
+                     # if self.newname_model.old_file_user_name[i] in self.newname_model.old_full_path[j]:
+                     #    for index, full_path in enumerate(self.newname_model.old_full_path):
+                     #        print(index)
+                            # origin_full_path = self.newname_model.old_full_path[index]
+                            # print("aaa", origin_full_path)
+                            # origin_file_name = origin_full_path.split("/")[-1]
+        #             new_file_name = origin_file_name.replace(self.newname_model.old_file_user_name[0],
+        #                                                      self.newname_model.new_file_name[0])
+        #             new_full_path = '/'.join(origin_full_path.split("/")[:-1]) + '/' + new_file_name
+        #             if platform.system() == 'Windows':
+        #                 new_full_path = new_full_path.replace('/', '\\')
+        #                 self.newname_model.old_full_path[index] = self.newname_model.old_full_path[index].replace('/', '\\')
+        #             # os.rename(self.newname_model.old_full_path[index], new_full_path)
+        #         return
+        #
+        #     elif not self.browse_count:
+        #         self.show_warning('Push the browse button.')
+        #         self.window_all_clear()
+        #         return
+        #
+        #     elif self.newname_model.old_file_user_name[i] not in self.newname_model.old_full_path[i]:
+        #         self.show_warning('File name does not exist.')
+        #         self.window_all_clear()
+        #         return
+        #
+        #     else:
+        #         self.show_warning('Writing a file name.')
+        #         self.window_all_clear()
+        #         return
+        # self.window_all_clear()
 
     def window_all_clear(self):
         if self.action_count > 0:
@@ -224,8 +233,6 @@ class RenamePathController:
                 self.deleted_new_text_widget.append(self.newname_model.new_text_widget[i])
                 self.deleted_rename_hbox.append(self.newname_model.rename_hbox[i])
                 self.deleted_rename_hwidget.append(self.newname_model.rename_hwidget[i])
-                self.newname_model.old_text_widget[i].clear()
-                self.newname_model.new_text_widget[i].clear()
 
             for i in range(self.action_count):
                 self.newname_model.old_text_widget[i + 1].setParent(None)
@@ -234,20 +241,25 @@ class RenamePathController:
                 self.newname_model.rename_hbox[i + 1].removeWidget(self.newname_model.new_text_widget[i + 1])
                 self.newname_view.new_name_vbox_layout.takeAt(self.newname_view.new_name_vbox_layout.count() - 1)
         else:
-            self.newname_model.old_text_widget[self.action_count].clear()
-            self.newname_model.new_text_widget[self.action_count].clear()
+            self.newname_model.old_text_widget[0].setText('')
+            self.newname_model.new_text_widget[0].setText('')
+
+            self.newname_model.old_text_widget.clear()
+            self.newname_model.new_text_widget.clear()
+            self.newname_model.rename_hbox.clear()
+            self.newname_model.rename_hwidget.clear()
+
+            self.newname_model.old_text_widget.insert(0, QLineEdit())
+            self.newname_model.new_text_widget.insert(0, QLineEdit())
+            self.newname_model.rename_hbox.insert(0, QHBoxLayout())
+            self.newname_model.rename_hwidget.insert(0, QWidget())
 
         self.newname_model.old_full_path.clear()
         self.newname_model.old_dir_name.clear()
         self.newname_model.old_file_real_name.clear()
         self.newname_model.old_file_ext.clear()
 
-        self.newname_model.old_text_widget.clear()
-        self.newname_model.new_text_widget.clear()
-        self.newname_model.rename_hbox.clear()
-        self.newname_model.rename_hwidget.clear()
-
-        self.rename_view.line_edit.clear()
+        self.rename_view.line_edit.setText('')
 
         self.action_count = 0
         self.browse_count = False

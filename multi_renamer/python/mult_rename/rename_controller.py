@@ -190,19 +190,21 @@ class RenamePathController:
             self.newname_model.new_file_name.append(new_text.text())
 
         for i in range(self.action_count + 1):
-            if self.browse_count and self.newname_model.old_file_user_name[i] != '' and self.newname_model.new_file_name[i] != '':
-                for j in self.newname_model.old_full_path:
-                    if any(index in j for index in self.newname_model.old_file_user_name):
-                        for index, full_path in enumerate(self.newname_model.old_full_path):
-                            origin_full_path = self.newname_model.old_full_path[index]
-                            origin_file_name = origin_full_path.split("/")[-1]
-                            new_file_name = origin_file_name.replace(self.newname_model.old_file_user_name[0], self.newname_model.new_file_name[0])
-                            new_full_path = '/'.join(origin_full_path.split("/")[:-1]) + '/' + new_file_name
-                            if platform.system() == 'Windows':
-                                new_full_path = new_full_path.replace('/', '\\')
-                                self.newname_model.old_full_path[index] = self.newname_model.old_full_path[index].replace('/', '\\')
-                            os.rename(self.newname_model.old_full_path[index], new_full_path)
-                            self.newname_model.old_full_path[index] = new_full_path
+            if self.browse_count and self.newname_model.old_file_user_name[i] != '' and \
+                    self.newname_model.new_file_name[i] != '':
+                for full_path in self.newname_model.old_full_path:
+                    if any(index in full_path for index in self.newname_model.old_file_user_name):
+                        origin_full_path = full_path
+                        origin_file_name = os.path.basename(origin_full_path)
+                        new_file_name = origin_file_name.replace(self.newname_model.old_file_user_name[0],
+                                                                 self.newname_model.new_file_name[0])
+                        new_full_path = '/'.join(origin_full_path.split("/")[:-1]) + '/' + new_file_name
+                        # os.rename(origin_full_path, new_full_path)
+
+                        # new_full_path를 old_full_path에 넣어줘서 재사용하도록 한다.
+
+                        # self.newname_model.old_full_path[self.newname_model.old_full_path.index(origin_full_path)] = new_full_path
+                        # self.newname_model.old_full_path.append(new_full_path)
 
         #     elif not self.browse_count:
         #         self.show_warning('Push the browse button.')

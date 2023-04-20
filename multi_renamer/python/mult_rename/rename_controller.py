@@ -189,32 +189,29 @@ class RenamePathController:
         for new_text in self.newname_model.new_text_widget:
             self.newname_model.new_file_name.append(new_text.text())
 
-        if self.action_count == 0 and self.browse_count and self.newname_model.old_file_user_name[0] and \
-                self.newname_model.new_file_name[0] and self.newname_model.old_file_user_name[0] in \
-                self.newname_model.old_full_path[0]:
-            for index, full_path in enumerate(self.newname_model.old_full_path):
-                origin_full_path = self.newname_model.old_full_path[index]
-                origin_file_name = origin_full_path.split("/")[-1]
-                new_file_name = origin_file_name.replace(self.newname_model.old_file_user_name[0],
-                                                         self.newname_model.new_file_name[0])
-                new_full_path = '/'.join(origin_full_path.split("/")[:-1]) + '/' + new_file_name
-
-                if platform.system() == 'Windows':
-                    new_full_path = new_full_path.replace('/', '\\')
-                    self.newname_model.old_full_path[0] = self.newname_model.old_full_path[0].replace('/', '\\')
-
-                os.rename(self.newname_model.old_full_path[0], new_full_path)
-            self.window_all_clear()
-            return
-
-        elif not self.browse_count:
-            self.show_warning('Push the browse button.')
-            self.window_all_clear()
-            return
-
         for i in range(self.action_count+1):
-            if self.newname_model.old_file_user_name[i] != '' and self.newname_model.new_file_name[i] != '':
-                pass
+            if self.browse_count and self.newname_model.old_file_user_name[i] != '' and self.newname_model.new_file_name[i] != '' and self.newname_model.old_file_user_name[i] in self.newname_model.old_full_path[i]:
+                for index, full_path in enumerate(self.newname_model.old_full_path):
+                    origin_full_path = self.newname_model.old_full_path[index]
+                    origin_file_name = origin_full_path.split("/")[-1]
+                    new_file_name = origin_file_name.replace(self.newname_model.old_file_user_name[0], self.newname_model.new_file_name[0])
+                    new_full_path = '/'.join(origin_full_path.split("/")[:-1]) + '/' + new_file_name
+                    if platform.system() == 'Windows':
+                        new_full_path = new_full_path.replace('/', '\\')
+                        self.newname_model.old_full_path[index] = self.newname_model.old_full_path[index].replace('/', '\\')
+                    os.rename(self.newname_model.old_full_path[index], new_full_path)
+                self.window_all_clear()
+
+            elif not self.browse_count:
+                self.show_warning('Push the browse button.')
+                self.window_all_clear()
+                return
+
+            elif self.newname_model.old_file_user_name[i] not in self.newname_model.old_full_path[i]:
+                self.show_warning('File name does not exist.')
+                self.window_all_clear()
+                return
+
             else:
                 self.show_warning('Writing a file name.')
                 self.window_all_clear()

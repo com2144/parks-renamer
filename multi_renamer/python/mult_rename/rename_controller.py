@@ -196,28 +196,31 @@ class RenamePathController:
                             new_full_path = '/'.join(full_path.split("/")[:-1]) + '/' + new_file_name + origin_file_ext
                             self.newname_model.new_full_path.append(new_full_path)
                             os.rename(full_path, new_full_path)
+                        else:
+                            self.show_warning('File name does not exist.')
+                            self.window_all_clear()
+                            return
                     self.newname_model.old_full_path = self.newname_model.new_full_path
                     self.newname_model.new_full_path = []
 
-                elif self.newname_model.old_file_user_name[i] not in self.newname_model.old_full_path[i]:
-                    self.show_warning('File name does not exist.')
-                    # self.window_all_clear()
-                    return
-
                 elif self.newname_model.old_file_user_name[i] == '' and self.newname_model.new_file_user_name[i] == '':
                     self.show_warning('Writing a file name.')
-                    # self.window_all_clear()
+                    self.window_all_clear()
                     return
             self.window_all_clear()
+            self.show_warning('Rename is done.')
 
         elif not self.browse_count:
             self.show_warning('Push the browse button.')
-            # self.window_all_clear()
+            self.window_all_clear()
             return
 
     def window_all_clear(self):
         if self.action_count > 0:
+
             for i in range(self.action_count + 1):
+                self.newname_model.old_text_widget[i].setText('')
+                self.newname_model.new_text_widget[i].setText('')
                 self.deleted_old_text_widget.append(self.newname_model.old_text_widget[i])
                 self.deleted_new_text_widget.append(self.newname_model.new_text_widget[i])
                 self.deleted_rename_hbox.append(self.newname_model.rename_hbox[i])
@@ -233,17 +236,17 @@ class RenamePathController:
             self.newname_model.old_text_widget[0].setText('')
             self.newname_model.new_text_widget[0].setText('')
 
-            self.newname_model.old_text_widget.clear()
-            self.newname_model.new_text_widget.clear()
-            self.newname_model.rename_hbox.clear()
-            self.newname_model.rename_hwidget.clear()
+            self.newname_model.old_text_widget = []
+            self.newname_model.new_text_widget = []
+            self.newname_model.rename_hbox = []
+            self.newname_model.rename_hwidget = []
 
             self.newname_model.old_text_widget.insert(0, QLineEdit())
             self.newname_model.new_text_widget.insert(0, QLineEdit())
             self.newname_model.rename_hbox.insert(0, QHBoxLayout())
             self.newname_model.rename_hwidget.insert(0, QWidget())
 
-        self.newname_model.old_full_path.clear()
+        self.newname_model.old_full_path = []
         self.rename_view.line_edit.setText('')
 
         self.action_count = 0

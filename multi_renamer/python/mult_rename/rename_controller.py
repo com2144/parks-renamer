@@ -217,7 +217,6 @@ class RenamePathController:
 
     def window_all_clear(self):
         if self.action_count > 0:
-
             for i in range(self.action_count + 1):
                 self.newname_model.old_text_widget[i].setText('')
                 self.newname_model.new_text_widget[i].setText('')

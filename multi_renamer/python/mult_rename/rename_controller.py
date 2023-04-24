@@ -235,15 +235,15 @@ class RenamePathController:
             self.newname_model.old_text_widget[0].setText('')
             self.newname_model.new_text_widget[0].setText('')
 
-            self.newname_model.old_text_widget = []
-            self.newname_model.new_text_widget = []
-            self.newname_model.rename_hbox = []
-            self.newname_model.rename_hwidget = []
-
             self.newname_model.old_text_widget.insert(0, QLineEdit())
             self.newname_model.new_text_widget.insert(0, QLineEdit())
             self.newname_model.rename_hbox.insert(0, QHBoxLayout())
             self.newname_model.rename_hwidget.insert(0, QWidget())
+
+        self.newname_model.old_text_widget = []
+        self.newname_model.new_text_widget = []
+        self.newname_model.rename_hbox = []
+        self.newname_model.rename_hwidget = []
 
         self.newname_model.old_full_path = []
         self.rename_view.line_edit.setText('')

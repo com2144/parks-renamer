@@ -1,4 +1,4 @@
-class RenamePathModel:
+class RenameMainModel:
     def __init__(self):
         self.path = ''
 

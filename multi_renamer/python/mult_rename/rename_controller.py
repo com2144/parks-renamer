@@ -1,6 +1,6 @@
 from PySide2.QtWidgets import *
-from mult_rename.rename_model import RenamePathModel
-from mult_rename.rename_view import RenamePathView
+from mult_rename.rename_model import RenameMainModel
+from mult_rename.rename_view import RenameMainView
 from mult_rename.rename_model import RenameNewPathModel
 from mult_rename.rename_view import RenameNewPathView
 from mult_rename.rename_view import FileListDialog
@@ -10,12 +10,12 @@ import os
 
 class RenamePathController:
     def __init__(self):
-        self.rename_model = RenamePathModel()
-        self.rename_view = RenamePathView()
+        self.main_model = RenameMainModel()
+        self.main_view = RenameMainView()
         self.newname_model = RenameNewPathModel()
         self.newname_view = RenameNewPathView()
 
-        self.dir_path = self.rename_model.path
+        self.dir_path = self.main_model.path
         self.action_count = 0
         self.browse_count = False
 
@@ -31,20 +31,22 @@ class RenamePathController:
         self.path_ui()
 
     def path_ui(self):
-        self.rename_view.line_edit.setPlaceholderText("Enter a file path")
+        self.main_view.line_edit.setPlaceholderText("Enter a file path")
 
-        self.rename_view.path_layout.addWidget(self.rename_view.line_edit)
-        self.rename_view.path_layout.addWidget(self.rename_view.browse_button)
+        self.main_view.path_hbox_layout.addWidget(self.main_view.line_edit)
+        self.main_view.path_hbox_layout.addWidget(self.main_view.browse_button)
+        self.main_view.main_vbox_layuout.addLayout(self.main_view.path_hbox_layout)
 
-        self.rename_view.browse_button.clicked.connect(self.on_browse_button_clicked)
+        self.main_view.browse_button.clicked.connect(self.on_browse_button_clicked)
 
-        self.newname_view.use_button_layout.addWidget(self.newname_view.plus_button)
-        self.newname_view.use_button_layout.addWidget(self.newname_view.minus_button)
-        self.newname_view.use_button_layout.addWidget(self.newname_view.rename_button)
+        self.main_view.use_button_hbox_layout.addWidget(self.main_view.plus_button)
+        self.main_view.use_button_hbox_layout.addWidget(self.main_view.minus_button)
+        self.main_view.use_button_hbox_layout.addWidget(self.main_view.rename_button)
+        self.main_view.main_vbox_layuout.addLayout(self.main_view.use_button_hbox_layout)
 
-        self.newname_view.plus_button.clicked.connect(self.on_plus_button_clicked)
-        self.newname_view.minus_button.clicked.connect(self.on_minus_button_clicked)
-        self.newname_view.rename_button.clicked.connect(self.on_rename_button_clicked)
+        self.main_view.plus_button.clicked.connect(self.on_plus_button_clicked)
+        self.main_view.minus_button.clicked.connect(self.on_minus_button_clicked)
+        self.main_view.rename_button.clicked.connect(self.on_rename_button_clicked)
 
         self.newname_view.new_name_layout.addWidget(self.newname_view.old_edit)
         self.newname_view.new_name_layout.addWidget(self.newname_view.new_edit)
@@ -54,18 +56,15 @@ class RenamePathController:
         self.newname_model.rename_hbox.append(self.newname_view.new_name_layout)
         self.newname_model.rename_hwidget.append(self.newname_view.widget_hbox_layout)
 
-        self.newname_view.new_name_vbox_layout.setSpacing(0)
-        self.newname_view.new_name_vbox_layout.addWidget(self.newname_view.widget_hbox_layout)
-        self.newname_view.widget_vbox_layout.setLayout(self.newname_view.new_name_vbox_layout)
+        self.main_view.new_name_vbox_layout.setSpacing(0)
+        self.main_view.new_name_vbox_layout.addWidget(self.newname_view.widget_hbox_layout)
+        self.main_view.widget_vbox_layout.setLayout(self.main_view.new_name_vbox_layout)
 
-        self.newname_view.scroll_edit_layout.setWidgetResizable(True)
-        self.newname_view.scroll_edit_layout.setWidget(self.newname_view.widget_vbox_layout)
+        self.main_view.scroll_edit_layout.setWidgetResizable(True)
+        self.main_view.scroll_edit_layout.setWidget(self.main_view.widget_vbox_layout)
+        self.main_view.main_vbox_layuout.addWidget(self.main_view.scroll_edit_layout)
 
-        self.rename_view.main_layout.addLayout(self.rename_view.path_layout, 1, 2)
-        self.rename_view.main_layout.addLayout(self.newname_view.use_button_layout, 2, 1)
-        self.rename_view.main_layout.addWidget(self.newname_view.scroll_edit_layout, 2, 2)
-
-        self.rename_view.setLayout(self.rename_view.main_layout)
+        self.main_view.setLayout(self.main_view.main_vbox_layuout)
 
     def on_browse_button_clicked(self):
         self.browse_count = True
@@ -87,13 +86,13 @@ class RenamePathController:
             browse_option.close()
         else:
             self.set_file_path(self.dir_path)
-            self.rename_view.line_edit.setText(self.dir_path)
+            self.main_view.line_edit.setText(self.dir_path)
             self.show_files_in_directory(self.dir_path)
 
     def show_files_in_directory(self, directory):
         file_list = os.listdir(directory)
 
-        self.file_list_dialog = FileListDialog(self.rename_view)
+        self.file_list_dialog = FileListDialog(self.main_view)
         self.file_list_dialog.set_files(file_list)
 
         self.file_list_dialog.show()
@@ -153,11 +152,11 @@ class RenamePathController:
             self.newname_model.rename_hbox[i + 1].addWidget(self.newname_model.old_text_widget[i + 1])
             self.newname_model.rename_hbox[i + 1].addWidget(self.newname_model.new_text_widget[i + 1])
             self.newname_model.rename_hwidget[i + 1].setLayout(self.newname_model.rename_hbox[i + 1])
-            self.newname_view.new_name_vbox_layout.addWidget(self.newname_model.rename_hwidget[i + 1])
-        self.newname_view.new_name_vbox_layout.setSpacing(0)
-        self.newname_view.widget_vbox_layout.setLayout(self.newname_view.new_name_vbox_layout)
-        self.newname_view.scroll_edit_layout.setWidgetResizable(True)
-        self.newname_view.scroll_edit_layout.setWidget(self.newname_view.widget_vbox_layout)
+            self.main_view.new_name_vbox_layout.addWidget(self.newname_model.rename_hwidget[i + 1])
+        self.main_view.new_name_vbox_layout.setSpacing(0)
+        self.main_view.widget_vbox_layout.setLayout(self.main_view.new_name_vbox_layout)
+        self.main_view.scroll_edit_layout.setWidgetResizable(True)
+        self.main_view.scroll_edit_layout.setWidget(self.main_view.widget_vbox_layout)
 
     def on_minus_button_clicked(self):
         if self.action_count > 0:
@@ -170,7 +169,7 @@ class RenamePathController:
 
             self.newname_model.rename_hbox[-1].removeWidget(self.newname_model.old_text_widget[-1])
             self.newname_model.rename_hbox[-1].removeWidget(self.newname_model.new_text_widget[-1])
-            self.newname_view.new_name_vbox_layout.takeAt(self.newname_view.new_name_vbox_layout.count() - 1)
+            self.main_view.new_name_vbox_layout.takeAt(self.main_view.new_name_vbox_layout.count() - 1)
 
             self.newname_model.old_text_widget.pop()
             self.newname_model.new_text_widget.pop()
@@ -240,7 +239,7 @@ class RenamePathController:
                 self.newname_model.new_text_widget[i + 1].setParent(None)
                 self.newname_model.rename_hbox[i + 1].removeWidget(self.newname_model.old_text_widget[i + 1])
                 self.newname_model.rename_hbox[i + 1].removeWidget(self.newname_model.new_text_widget[i + 1])
-                self.newname_view.new_name_vbox_layout.takeAt(self.newname_view.new_name_vbox_layout.count() - 1)
+                self.main_view.new_name_vbox_layout.takeAt(self.main_view.new_name_vbox_layout.count() - 1)
         else:
             self.newname_model.old_text_widget[0].setText('')
             self.newname_model.new_text_widget[0].setText('')
@@ -256,7 +255,7 @@ class RenamePathController:
         self.newname_model.rename_hwidget = []
 
         self.newname_model.old_full_path = []
-        self.rename_view.line_edit.setText('')
+        self.main_view.line_edit.setText('')
 
         self.action_count = 0
         self.browse_count = False
@@ -278,7 +277,7 @@ def main():
     app = QApplication()
     controller = RenamePathController()
     window = QMainWindow()
-    window.setCentralWidget(controller.rename_view)
+    window.setCentralWidget(controller.main_view)
     window.setWindowTitle("Renamer")
     window.show()
     app.exec_()

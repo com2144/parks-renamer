@@ -144,10 +144,10 @@ class RenamePathController:
             self.newname_model.rename_hbox.append(new_hbox_layout)
             self.newname_model.rename_hwidget.append(new_widget_hbox_layout)
 
-        self.deleted_old_text_widget.clear()
-        self.deleted_new_text_widget.clear()
-        self.deleted_rename_hbox.clear()
-        self.deleted_rename_hwidget.clear()
+        self.deleted_old_text_widget = []
+        self.deleted_new_text_widget = []
+        self.deleted_rename_hbox = []
+        self.deleted_rename_hwidget = []
 
         for i in range(self.action_count):
             self.newname_model.rename_hbox[i + 1].addWidget(self.newname_model.old_text_widget[i + 1])
@@ -180,31 +180,25 @@ class RenamePathController:
             self.action_count -= 1
 
     def on_rename_button_clicked(self):
-        for old_text in self.newname_model.old_text_widget:
-            self.newname_model.old_file_user_name.append(old_text.text())
-        for new_text in self.newname_model.new_text_widget:
-            self.newname_model.new_file_user_name.append(new_text.text())
-
         if self.browse_count:
-            for i in range(self.action_count+1):
-                if self.newname_model.old_file_user_name[i] != '' and self.newname_model.new_file_user_name[i] != '' and len(self.newname_model.old_full_path) != len(self.newname_model.new_full_path):
-                    for full_path in self.newname_model.old_full_path:
-                        if any(user_file_name in full_path for user_file_name in self.newname_model.old_file_user_name[i]):
-                            origin_file_name = os.path.basename(full_path)
-                            without_origin_file_ext, origin_file_ext = os.path.splitext(origin_file_name)
-                            new_file_name = without_origin_file_ext.replace(self.newname_model.old_file_user_name[i], self.newname_model.new_file_user_name[i])
-                            new_full_path = '/'.join(full_path.split("/")[:-1]) + '/' + new_file_name + origin_file_ext
-                            self.newname_model.new_full_path.append(new_full_path)
-                            os.rename(full_path, new_full_path)
-                        else:
-                            self.show_warning('File name does not exist.')
-                            self.window_all_clear()
-                            return
-                    self.newname_model.old_full_path = self.newname_model.new_full_path
-                    self.newname_model.new_full_path = []
+            for old_text in self.newname_model.old_text_widget:
+                self.newname_model.old_file_user_name.append(old_text.text())
+            for new_text in self.newname_model.new_text_widget:
+                self.newname_model.new_file_user_name.append(new_text.text())
 
-                elif self.newname_model.old_file_user_name[i] == '' and self.newname_model.new_file_user_name[i] == '':
+            for i in range(self.action_count + 1):
+                old_name = self.newname_model.old_file_user_name[i]
+                new_name = self.newname_model.new_file_user_name[i]
+
+                if not old_name and not new_name:
                     self.show_warning('Writing a file name.')
+                    self.window_all_clear()
+                    return
+
+                if old_name and new_name and len(self.newname_model.old_full_path) != len(self.newname_model.new_full_path):
+                    self.process_rename(old_name, new_name)
+                else:
+                    self.show_warning('File name does not exist.')
                     self.window_all_clear()
                     return
             self.window_all_clear()
@@ -214,6 +208,22 @@ class RenamePathController:
             self.show_warning('Push the browse button.')
             self.window_all_clear()
             return
+
+    def process_rename(self, old_name, new_name):
+        for full_path in self.newname_model.old_full_path:
+            if any(user_file_name in full_path for user_file_name in old_name):
+                origin_file_name = os.path.basename(full_path)
+                without_origin_file_ext, origin_file_ext = os.path.splitext(origin_file_name)
+                new_file_name = without_origin_file_ext.replace(old_name, new_name)
+                new_full_path = '/'.join(full_path.split("/")[:-1]) + '/' + new_file_name + origin_file_ext
+                self.newname_model.new_full_path.append(new_full_path)
+                os.rename(full_path, new_full_path)
+            else:
+                self.show_warning('File name does not exist.')
+                self.window_all_clear()
+                return
+            self.newname_model.old_full_path = self.newname_model.new_full_path
+            self.newname_model.new_full_path = []
 
     def window_all_clear(self):
         if self.action_count > 0:

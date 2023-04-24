@@ -68,7 +68,7 @@ class RenamePathController:
 
     def on_browse_button_clicked(self):
         self.browse_count = True
-        self.newname_model.old_full_path.clear()
+        self.newname_model.old_full_path = []
 
         if self.file_list_dialog is not None:
             self.file_list_dialog.close()
@@ -221,8 +221,8 @@ class RenamePathController:
                 self.show_warning('File name does not exist.')
                 self.window_all_clear()
                 return
-            self.newname_model.old_full_path = self.newname_model.new_full_path
-            self.newname_model.new_full_path = []
+        self.newname_model.old_full_path = self.newname_model.new_full_path
+        self.newname_model.new_full_path = []
 
     def window_all_clear(self):
         if self.action_count > 0:
@@ -240,41 +240,18 @@ class RenamePathController:
                 self.newname_model.rename_hbox[i + 1].removeWidget(self.newname_model.old_text_widget[i + 1])
                 self.newname_model.rename_hbox[i + 1].removeWidget(self.newname_model.new_text_widget[i + 1])
                 self.main_view.new_name_vbox_layout.takeAt(self.main_view.new_name_vbox_layout.count() - 1)
-        else:
-            self.newname_model.old_text_widget[0].setText('')
-            self.newname_model.new_text_widget[0].setText('')
 
-            self.newname_model.old_text_widget[0].setParent(None)
-            self.newname_model.new_text_widget[0].setParent(None)
-            self.newname_model.rename_hbox[0].removeWidget(self.newname_model.old_text_widget[0])
-            self.newname_model.rename_hbox[0].removeWidget(self.newname_model.new_text_widget[0])
-            self.main_view.new_name_vbox_layout.takeAt(self.main_view.new_name_vbox_layout.count() - 1)
+        self.newname_model.old_text_widget[0].setText('')
+        self.newname_model.new_text_widget[0].setText('')
 
-        self.newname_model.old_text_widget = []
-        self.newname_model.new_text_widget = []
-        self.newname_model.rename_hbox = []
-        self.newname_model.rename_hwidget = []
-
-        self.newname_model.old_text_widget.append(QLineEdit())
-        self.newname_model.new_text_widget.append(QLineEdit())
-        self.newname_model.rename_hbox.append(QHBoxLayout())
-        self.newname_model.rename_hwidget.append(QWidget())
-
-        self.newname_model.rename_hbox[0].addWidget(self.newname_model.old_text_widget[0])
-        self.newname_model.rename_hbox[0].addWidget(self.newname_model.new_text_widget[0])
-        self.newname_model.rename_hwidget[0].setLayout(self.newname_model.rename_hbox[0])
-        self.main_view.new_name_vbox_layout.setSpacing(0)
-        self.main_view.new_name_vbox_layout.addWidget(self.newname_model.rename_hwidget[0])
-        self.main_view.widget_vbox_layout.setLayout(self.main_view.new_name_vbox_layout)
+        self.newname_model.old_file_user_name = []
+        self.newname_model.new_file_user_name = []
 
         self.newname_model.old_full_path = []
         self.main_view.line_edit.setText('')
 
         self.action_count = 0
         self.browse_count = False
-
-        self.newname_model.old_file_user_name = []
-        self.newname_model.new_file_user_name = []
 
         if self.file_list_dialog is not None:
             self.file_list_dialog.close()

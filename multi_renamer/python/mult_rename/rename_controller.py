@@ -162,8 +162,8 @@ class RenamePathController:
     def on_minus_button_clicked(self):
         if self.action_count > 0:
             if self.newname_model.old_text_widget[-1].text():
-                self.newname_model.old_text_widget[-1].clear()
-                self.newname_model.new_text_widget[-1].clear()
+                self.newname_model.old_text_widget[-1].setText('')
+                self.newname_model.new_text_widget[-1].setText('')
 
             self.newname_model.old_text_widget[-1].setParent(None)
             self.newname_model.new_text_widget[-1].setParent(None)

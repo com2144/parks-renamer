@@ -1,2 +1,5 @@
 # This program is renamer.
-User choose directory and files renaming.
+##Sigle renamer
+User choose one by one file renaming
+##Multi renamer
+User choose directory's files renaming

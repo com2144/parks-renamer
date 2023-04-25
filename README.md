@@ -1,5 +1,6 @@
 # This program is renamer.
-##Sigle renamer
+## Sigle renamer
 User choose one by one file renaming
-##Multi renamer
+
+## Multi renamer
 User choose directory's files renaming

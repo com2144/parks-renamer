@@ -34,6 +34,10 @@ class FileListDialog(QDialog):
         self.dialog_layout.addWidget(self.list_widget)
         self.setLayout(self.dialog_layout)
         self.setModal(False)
+        center_point = QDesktopWidget().availableGeometry().center()
+        new_x = center_point.x() + 150
+        new_y = center_point.y() - 280
+        self.move(new_x, new_y)
 
     def set_files(self, file_list):
         for file in file_list:

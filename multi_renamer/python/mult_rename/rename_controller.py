@@ -1,10 +1,6 @@
 from PySide2.QtWidgets import *
-from mult_rename.rename_model import RenameMainModel
-from mult_rename.rename_view import RenameMainView
-from mult_rename.rename_model import RenameNewPathModel
-from mult_rename.rename_view import RenameNewPathView
-from mult_rename.rename_view import FileListDialog
-from mult_rename.rename_view import BrowseDialog
+from rename_model import *
+from rename_view import *
 import os
 
 
@@ -41,7 +37,6 @@ class RenamePathController:
 
         self.main_view.use_button_hbox_layout.addWidget(self.main_view.plus_button)
         self.main_view.use_button_hbox_layout.addWidget(self.main_view.minus_button)
-        self.main_view.use_button_hbox_layout.addWidget(self.main_view.rename_button)
         self.main_view.main_vbox_layuout.addLayout(self.main_view.use_button_hbox_layout)
 
         self.main_view.plus_button.clicked.connect(self.on_plus_button_clicked)
@@ -63,6 +58,9 @@ class RenamePathController:
         self.main_view.scroll_edit_layout.setWidgetResizable(True)
         self.main_view.scroll_edit_layout.setWidget(self.main_view.widget_vbox_layout)
         self.main_view.main_vbox_layuout.addWidget(self.main_view.scroll_edit_layout)
+
+        self.main_view.rename_button_hbox_layout.addWidget(self.main_view.rename_button)
+        self.main_view.main_vbox_layuout.addLayout(self.main_view.rename_button_hbox_layout)
 
         self.main_view.setLayout(self.main_view.main_vbox_layuout)
 

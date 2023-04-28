@@ -267,11 +267,44 @@ class RenamePathController:
 
     @staticmethod
     def show_warning(error_message):
+        warning_box_style = """
+            QMessageBox{
+                font: 15pt "Courier New";
+                background-color: rgb(60, 60, 60);
+                color: rgb(225, 225, 225);
+            }
+
+            /* Set the style of the text label */
+            QLabel {
+                color: rgb(225, 225, 225);
+                font-size: 18px;
+            }
+
+            /* Set the style of the OK button */
+            QPushButton {
+                background-color: rgb(50, 50, 50);
+                color: rgb(225, 225, 225);
+                padding: 5px;
+                border: 1px solid rgb(225, 225, 225);
+                border-radius: 3px;
+            }
+
+            /* Set the style of the OK button when hovered */
+            QPushButton:hover {
+                background-color: rgb(80, 80, 80);
+            }
+
+            /* Set the style of the OK button when pressed */
+            QPushButton:pressed {
+                background-color: rgb(40, 40, 40);
+            }
+        """
         msg_box = QMessageBox()
         msg_box.setIcon(QMessageBox.Warning)
         msg_box.setWindowTitle("Warning")
         msg_box.setText(f"{error_message}")
         msg_box.setStandardButtons(QMessageBox.Ok)
+        msg_box.setStyleSheet(warning_box_style)
         msg_box.exec_()
 
 
@@ -281,6 +314,7 @@ def main():
     window = QMainWindow()
     window.setCentralWidget(controller.main_view)
     window.setWindowTitle("Renamer")
+    window.setFixedSize(420, 230)
     window.setStyleSheet("background-color: rgb(50, 50, 50);")
     window.show()
     app.exec_()

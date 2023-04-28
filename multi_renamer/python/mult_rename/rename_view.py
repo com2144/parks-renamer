@@ -13,8 +13,14 @@ class RenameMainView(QWidget):
             border-radius: 4px;
             font: 11pt\"Courier New\";
             background-color: rgb(60, 60, 60);
-            color: rgb(225, 225, 225)
+            color: rgb(225, 225, 225)   
         }
+       QPushButton:hover {
+            background-color: rgb(80, 80, 80);
+        }                  
+       QPushButton:pressed {
+            background-color: rgb(40, 40, 40);
+       }
         """
         line_style = """
         QLineEdit{
@@ -31,7 +37,6 @@ class RenameMainView(QWidget):
         self.browse_button = QPushButton("Browse")
         self.browse_button.setStyleSheet(browse_style)
         self.path_hbox_layout = QHBoxLayout()
-
 
         self.use_button_hbox_layout = QHBoxLayout()
         self.plus_button = QPushButton("+")
@@ -60,8 +65,9 @@ class FileListDialog(QDialog):
         self.setLayout(self.dialog_layout)
         self.setModal(False)
         center_point = QDesktopWidget().availableGeometry().center()
-        new_x = center_point.x() + 150
-        new_y = center_point.y() - 275
+        new_x = center_point.x() + 220
+        new_y = center_point.y() - 153
+        self.setFixedSize(300, 231)
         self.move(new_x, new_y)
 
     def set_files(self, file_list):
@@ -79,8 +85,8 @@ class FileListDialog(QDialog):
 
 
 class BrowseDialog(QFileDialog):
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self):
+        super().__init__()
         ow = self.Options()
         ow |= self.DontUseNativeDialog
         ow |= self.ShowDirsOnly
@@ -175,6 +181,7 @@ def main():
     window = QMainWindow()
     window.setCentralWidget(controller.main_view)
     window.setWindowTitle("Renamer")
+    window.setFixedSize(420, 230)
     window.setStyleSheet("background-color: rgb(50, 50, 50);")
     window.show()
     app.exec_()

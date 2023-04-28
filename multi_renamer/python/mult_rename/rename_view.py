@@ -6,20 +6,45 @@ import os
 class RenameMainView(QWidget):
     def __init__(self):
         super().__init__()
+        browse_style = """
+        QPushButton{
+            width: 70px; height: 30px;
+            border: 1px solid grey;
+            border-radius: 4px;
+            font: 11pt\"Courier New\";
+            background-color: rgb(60, 60, 60);
+            color: rgb(225, 225, 225)
+        }
+        """
+        line_style = """
+        QLineEdit{
+            width: 70px; height: 30px;
+            border: 1px solid grey;
+            border-radius: 4px;
+            font: 10pt\"Courier New\";
+            background-color: rgb(225, 225, 225);
+            color: rgb(0, 0, 0)
+        }        
+        """
         self.line_edit = QLineEdit()
+        self.line_edit.setStyleSheet(line_style)
         self.browse_button = QPushButton("Browse")
+        self.browse_button.setStyleSheet(browse_style)
         self.path_hbox_layout = QHBoxLayout()
+
 
         self.use_button_hbox_layout = QHBoxLayout()
         self.plus_button = QPushButton("+")
+        self.plus_button.setStyleSheet(browse_style)
         self.minus_button = QPushButton("-")
-
+        self.minus_button.setStyleSheet(browse_style)
 
         self.new_name_vbox_layout = QVBoxLayout()
         self.widget_vbox_layout = QWidget()
         self.scroll_edit_layout = QScrollArea()
 
         self.rename_button = QPushButton("Rename")
+        self.rename_button.setStyleSheet(browse_style)
         self.rename_button_hbox_layout = QHBoxLayout()
 
         self.main_vbox_layuout = QVBoxLayout()
@@ -36,7 +61,7 @@ class FileListDialog(QDialog):
         self.setModal(False)
         center_point = QDesktopWidget().availableGeometry().center()
         new_x = center_point.x() + 150
-        new_y = center_point.y() - 280
+        new_y = center_point.y() - 275
         self.move(new_x, new_y)
 
     def set_files(self, file_list):
@@ -44,6 +69,13 @@ class FileListDialog(QDialog):
             file_name, file_ext = os.path.splitext(file)
             if file_ext != '':
                 self.list_widget.addItem(file_name)
+                list_widget_style = """
+                QListWidget{
+                    font: 10pt\"Courier New\";
+                    color: rgb(225, 225, 225)
+                }
+                """
+                self.list_widget.setStyleSheet(list_widget_style)
 
 
 class BrowseDialog(QFileDialog):
@@ -60,8 +92,19 @@ class BrowseDialog(QFileDialog):
 class RenameNewPathView(QWidget):
     def __init__(self):
         super().__init__()
+        line_style = """
+        QLineEdit{
+            border: 1px solid grey;
+            border-radius: 4px;
+            font: 10pt\"Courier New\";
+            background-color: rgb(225, 225, 225);
+            color: rgb(0, 0, 0)
+        }        
+        """
         self.old_edit = QLineEdit()
+        self.old_edit.setStyleSheet(line_style)
         self.new_edit = QLineEdit()
+        self.new_edit.setStyleSheet(line_style)
         self.new_name_layout = QHBoxLayout()
         self.widget_hbox_layout = QWidget()
 
@@ -96,7 +139,6 @@ class TestUi:
         self.newname_view.new_name_layout.addWidget(self.newname_view.new_edit)
         self.newname_view.widget_hbox_layout.setLayout(self.newname_view.new_name_layout)
 
-
         self.main_view.new_name_vbox_layout.setSpacing(0)
         self.main_view.new_name_vbox_layout.addWidget(self.newname_view.widget_hbox_layout)
         self.main_view.widget_vbox_layout.setLayout(self.main_view.new_name_vbox_layout)
@@ -107,7 +149,6 @@ class TestUi:
 
         self.main_view.rename_button_hbox_layout.addWidget(self.main_view.rename_button)
         self.main_view.main_vbox_layuout.addLayout(self.main_view.rename_button_hbox_layout)
-
 
         self.main_view.setLayout(self.main_view.main_vbox_layuout)
 
@@ -134,6 +175,7 @@ def main():
     window = QMainWindow()
     window.setCentralWidget(controller.main_view)
     window.setWindowTitle("Renamer")
+    window.setStyleSheet("background-color: rgb(50, 50, 50);")
     window.show()
     app.exec_()
 

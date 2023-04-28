@@ -131,8 +131,19 @@ class RenamePathController:
                 self.newname_model.rename_hbox.append(self.deleted_rename_hbox[i])
                 self.newname_model.rename_hwidget.append(self.deleted_rename_hwidget[i])
         elif self.action_count > 0:
+            line_style = """
+            QLineEdit{
+                border: 1px solid grey;
+                border-radius: 4px;
+                font: 10pt\"Courier New\";
+                background-color: rgb(225, 225, 225);
+                color: rgb(0, 0, 0)
+            }        
+            """
             new_old_edit = QLineEdit()
+            new_old_edit.setStyleSheet(line_style)
             new_new_edit = QLineEdit()
+            new_new_edit.setStyleSheet(line_style)
             new_hbox_layout = QHBoxLayout()
             new_widget_hbox_layout = QWidget()
 
@@ -270,6 +281,7 @@ def main():
     window = QMainWindow()
     window.setCentralWidget(controller.main_view)
     window.setWindowTitle("Renamer")
+    window.setStyleSheet("background-color: rgb(50, 50, 50);")
     window.show()
     app.exec_()
 

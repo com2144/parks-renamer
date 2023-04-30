@@ -97,6 +97,7 @@ class RenamePathController:
         self.file_list_dialog.finished.connect(self.on_file_list_dialog_finished)
 
     def on_file_list_dialog_finished(self):
+        self.main_view.line_edit.setText('')
         self.file_list_dialog = None
 
     @staticmethod

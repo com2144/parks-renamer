@@ -314,7 +314,7 @@ def main():
     window = QMainWindow()
     window.setCentralWidget(controller.main_view)
     window.setWindowTitle("Renamer")
-    window.setFixedSize(420, 230)
+    window.setFixedSize(400, 210)
     window.setStyleSheet("background-color: rgb(50, 50, 50);")
     window.show()
     app.exec_()

@@ -67,7 +67,7 @@ class FileListDialog(QDialog):
         center_point = QDesktopWidget().availableGeometry().center()
         new_x = center_point.x() + 220
         new_y = center_point.y() - 153
-        self.setFixedSize(300, 231)
+        self.setFixedSize(300, 210)
         self.move(new_x, new_y)
 
     def set_files(self, file_list):
@@ -181,7 +181,7 @@ def main():
     window = QMainWindow()
     window.setCentralWidget(controller.main_view)
     window.setWindowTitle("Renamer")
-    window.setFixedSize(420, 230)
+    window.setFixedSize(400, 210)
     window.setStyleSheet("background-color: rgb(50, 50, 50);")
     window.show()
     app.exec_()

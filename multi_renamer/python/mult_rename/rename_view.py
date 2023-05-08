@@ -120,7 +120,6 @@ class TestUi:
         super().__init__()
         self.main_view = RenameMainView()
         self.newname_view = RenameNewPathView()
-        self.newname_model = RenameNewPathModel()
 
         self.test_main_ui()
 
